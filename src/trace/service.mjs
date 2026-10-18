@@ -325,7 +325,9 @@ export function createTraceProvider(api) {
   return {
     async read(record) {
       const email = await api('/emails/' + encodeURIComponent(record.email_id));
-      const checkpoint = await memory('inbox', 'event/' + record.email_id);
+      // Receipt events retain the customer's email for ownership checks, but
+      // their own inbox checkpoint holds the action requested after resumption.
+      const checkpoint = await memory('inbox', 'event/' + record.event_id);
       let approval = null;
       let sent = null;
       if (/^[A-F0-9]{16}$/.test(checkpoint?.permission_id || '')) {

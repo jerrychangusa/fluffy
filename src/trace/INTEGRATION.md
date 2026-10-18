@@ -26,8 +26,9 @@ Read README.md and schema.json in this directory before connecting a viewer.
 ## Secure setup by the operator
 
 1. Review and deploy only in an explicitly authorized environment. Preserve the
-   persistent `AGENT_STATE_DIR`; populate `SOURCE_REVISION` with the deployed Git
-   SHA. Existing agent configuration remains required, including
+   persistent `AGENT_STATE_DIR`. The agent deployer defaults `SOURCE_REVISION` to
+   the checked-out Git SHA; an explicit override must be a full 40-character SHA.
+   Existing agent configuration remains required, including
    `AGENT_BRIDGE_SECRET`, and existing model/policy settings for actual runs.
 2. Leave `TRACE_ENABLED` unset/false initially. To enable the reader, supply
    `TRACE_ENABLED=true`, `TRACE_OWNER_SUBJECT`, and `TRACE_OWNER_TOKEN`. Use an
@@ -35,6 +36,9 @@ Read README.md and schema.json in this directory before connecting a viewer.
    manager; never paste values in issues, commits, logs, browser bundles or PRs.
    Do not reuse the agent bridge signing secret as a browser-facing credential.
    If no appropriate credential/identity adapter exists, stop for secure setup.
+   Keep these settings in the private environment file supplied on each agent
+   deployment. The deployer validates and forwards them; omitted flags disable
+   tracing again. Values cannot contain whitespace, quotes, backslashes or `#`.
 3. Provider overlays are separately disabled unless `TRACE_PROVIDER_ENABLED=true`
    and existing `PRIMITIVE_API_KEY` is available. Existing
    `PRIMITIVE_API_BASE_URL` and optional `PRIMITIVE_FUNCTION_ID` are honored.
@@ -76,12 +80,17 @@ Never return a synthetic fixture as a fallback for an unavailable live trace.
 
 The actual inbox is `support@pink-marsh.primitive.email`. For a newly processed
 customer event, the signed agent response contains trace_id; alternatively resolve
-`trace-event/{eventId}` in private SQLite. Use the actual Primitive email ID and
+`trace-event/{eventId}` in private SQLite. Use the actual signed event ID and
 existing inbox checkpoint, not a guessed thread or approval ID. Do not log message
 content or copy production state into the PR. The read adapter follows
-`inbox/event/{emailId}` → permission_id → `inbox/request/{permissionId}` and checks
+`inbox/event/{eventId}` → permission_id → `inbox/request/{permissionId}` and checks
 the customer binding before reading the protocol-selected record. Delivery uses
 `approval.execution.provider_id` with GET `/v1/sent-emails/{id}`.
+
+For a customer event, eventId is the inbound customer email ID. For a resumed run,
+it is the receipt email ID; the original customer email ID remains the ownership
+binding. This keeps a new approval after a teammate answer separate from the
+earlier question.
 
 For an old event, a trusted offline operator can call
 `traces.begin(validatedOriginalEvent, {historical:true})` against private state.
@@ -96,7 +105,9 @@ that is reported as partial timing, not a 404 or invented clock value.
 These are instructions for an authorized operator, not claims of live execution.
 Use existing test identities and a controlled case. The original implementation
 passed 123 synthetic tests; reviewed fixes passed 129 tests before rebasing. The
-PR validation passed 135 tests on current main (85e609d), plus formatting and build. No live email, paid model
+PR validation passed 135 tests on main 85e609d. The review fixes add resumed-event
+approval/delivery coverage, customer binding checks and validated deployment
+configuration; all 142 tests, formatting and build pass locally. No live email, paid model
 call, production send or live provider query was performed for this work.
 
 | Step | Operator action                                                                                     | Required evidence / expected result                                                                                                     |

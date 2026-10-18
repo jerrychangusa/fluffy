@@ -20,7 +20,7 @@ The deployment scripts **update existing resources**. They do not create account
 
 The `requester` identity sends internal requests as well as receiving receipts. The configured optician mailbox receives questions; the configured approver receives permission requests. Both may be the same teammate.
 
-Keep credentials in private environment files outside the repo, using `.env.example` as a field reference. The Primitive deployment credential is only for the deployers. Primitive supplies its Functions with provider credentials, Function identity and webhook secret; preserve these. Configure `TYPESAFE_API_KEY` in the internal Function's secrets for Jev. The agent runtime needs `ANTHROPIC_API_KEY`, `TYPESAFE_API_KEY` and the shared `AGENT_BRIDGE_SECRET`. The inbox deployer needs that same bridge secret. Only the model key reaches the Claude subprocess.
+Keep credentials in private environment files outside the repo, using `.env.example` as a field reference. The Primitive credential stays with the deployers unless you explicitly enable the trusted runtime's read-only trace provider. Primitive supplies its Functions with provider credentials, Function identity and webhook secret; preserve these. Configure `TYPESAFE_API_KEY` in the internal Function's secrets for Jev. The agent runtime needs `ANTHROPIC_API_KEY`, `TYPESAFE_API_KEY` and the shared `AGENT_BRIDGE_SECRET`. The inbox deployer needs that same bridge secret. Only the model key reaches the Claude subprocess.
 
 ## Build and deploy
 
@@ -54,6 +54,14 @@ node --env-file=/absolute/private/agent.env agents/support/server.mjs
 Use `SUPPORT_CUSTOMER_ACCESS=authenticated` to accept any authenticated customer; `SUPPORT_CUSTOMER_EMAIL` is then optional.
 
 This starts the agent endpoint; it does not configure inbound email or expose a public URL.
+
+## Optional private traces
+
+The reader defaults off. To enable it, set `TRACE_ENABLED=true`, `TRACE_OWNER_SUBJECT` and an appropriate existing `TRACE_OWNER_TOKEN` in the private environment file used for every agent deployment. The deployer validates and forwards these settings into the protected runtime env file; omitting them on a later deployment disables tracing again. The token must differ from `AGENT_BRIDGE_SECRET` and remain server-side. Values must not contain whitespace, quotes, backslashes or `#`, because they are written as unquoted env fields.
+
+Provider reads require the separate `TRACE_PROVIDER_ENABLED=true` opt-in and `PRIMITIVE_API_KEY`. Only then does deployment forward the provider credential and optional `PRIMITIVE_API_BASE_URL` / `PRIMITIVE_FUNCTION_ID`. Provider base URLs must use HTTPS without embedded credentials, query strings or fragments. These settings never reach the Claude subprocess. `SOURCE_REVISION` defaults to the checked-out Git SHA; an explicit override must be a full 40-character SHA.
+
+Use `--dry-run` to validate the configuration without changing remote resources. A private browser viewer still needs an authenticated same-origin proxy; see the [trace integration guide](../src/trace/INTEGRATION.md). Enabling the backend does not connect the separate viewer.
 
 ## Human decisions
 

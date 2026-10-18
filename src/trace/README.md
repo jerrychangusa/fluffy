@@ -17,8 +17,13 @@ records. This work provisions no credentials and enables no deployment.
 
 Optional `TRACE_PROVIDER_ENABLED=true` uses the existing `PRIMITIVE_API_KEY` and
 Primitive client URL configuration. Provider reads occur only after authorization.
-Set `SOURCE_REVISION` to the deployed 40-character Git SHA. Missing configuration
-returns null revision and disconnected provider completeness, not uptime claims.
+The agent deployer forwards these opt-ins from the private environment file and
+defaults `SOURCE_REVISION` to the checked-out Git SHA. Repeat the settings on each
+deployment; omitted opt-ins disable the reader again. See the validated fields in
+[operations](../../docs/operations.md#optional-private-traces). When starting the
+server directly, set `SOURCE_REVISION` to the deployed 40-character Git SHA.
+Missing configuration returns null revision and disconnected provider completeness,
+not uptime claims.
 
 ## Viewer contract
 
@@ -49,10 +54,12 @@ agent. Historical checkpoints have null decision timestamps and mark completion
 instrumentation unavailable. Never replay a live event just to obtain a trace.
 No endpoint accepts arbitrary email IDs or imports historical records.
 
-The adapter follows current source contracts: `inbox/event/{emailId}` includes
+The adapter follows current source contracts: `inbox/event/{eventId}` includes
 permission_id; `inbox/request/{permissionId}` includes customer_email and
 receipt_protocol; `permission.receipt/1` routes to `approval`, and
 `question.receipt/1` to `questions`. Memories GET returns `{value,...}`.
+On a resumed run, eventId is the receipt's ID, while the original customer email
+ID and sender remain the independent ownership binding.
 Approval delivery uses nested `execution.provider_id` (not a top-level field).
 The read adapter calls `/emails/{id}`, `/memories?key=...`, and
 `/sent-emails/{id}` only; it never calls mutating `reconcile`. Missing or failing

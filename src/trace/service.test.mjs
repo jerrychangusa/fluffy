@@ -115,6 +115,7 @@ test('GET provider routes questions separately, verifies binding, never mutates'
       return { status: 'delivered' };
     });
     const result = await provider.read({
+      event_id: event.id,
       email_id: event.email.id,
       sender: event.email.from_email,
     });
@@ -127,6 +128,107 @@ test('GET provider routes questions separately, verifies binding, never mutates'
     );
     assert.equal(!!result.sent, protocol.startsWith('permission'));
   }
+});
+test('a teammate answer trace follows its new approval, not the original customer question', async (t) => {
+  const questionId = 'AAAAAAAAAAAAAAAA';
+  const approvalId = 'BBBBBBBBBBBBBBBB';
+  // The real inbox includes the original customer email on a receipt event.
+  const receipt = {
+    id: 'question-answer-receipt',
+    kind: 'receipt',
+    conversation_id: event.conversation_id,
+    email: event.email,
+    receipt: { request_id: questionId, status: 'answered' },
+  };
+  const records = new Map([
+    ['/emails/' + event.email.id, { received_at: '2026-10-18T10:00:00Z' }],
+    [
+      '/memories?key=inbox/event/' + event.id,
+      { value: { permission_id: questionId } },
+    ],
+    [
+      '/memories?key=inbox/event/' + receipt.id,
+      { value: { permission_id: approvalId } },
+    ],
+    [
+      '/memories?key=inbox/request/' + questionId,
+      {
+        value: {
+          customer_email: event.email,
+          receipt_protocol: 'question.receipt/1',
+        },
+      },
+    ],
+    [
+      '/memories?key=inbox/request/' + approvalId,
+      {
+        value: {
+          customer_email: event.email,
+          receipt_protocol: 'permission.receipt/1',
+        },
+      },
+    ],
+    [
+      '/memories?key=questions/' + questionId,
+      { value: { status: 'answered' } },
+    ],
+    [
+      '/memories?key=approval/' + approvalId,
+      {
+        value: {
+          status: 'executed',
+          execution: { provider_id: 'final-email' },
+        },
+      },
+    ],
+    ['/sent-emails/final-email', { status: 'delivered' }],
+  ]);
+  const calls = [];
+  const { traces, id } = setup(t, {
+    provider: createTraceProvider(async (...args) => {
+      assert.equal(args.length, 1, 'provider reads must remain GET-only');
+      const path = decodeURIComponent(args[0]);
+      calls.push(path);
+      assert.ok(records.has(path), path);
+      return records.get(path);
+    }),
+  });
+  const original = await traces.read(id, { identity: { subject: 'owner' } });
+  assert.equal(original.approval.status, 'answered');
+  assert.equal(original.delivery.state, 'unknown');
+  calls.length = 0;
+  const resumed = await traces.read(traces.begin(receipt), {
+    identity: { subject: 'owner' },
+  });
+  assert.equal(resumed.approval.status, 'executed');
+  assert.equal(resumed.delivery.state, 'delivered');
+  assert.ok(calls.includes('/memories?key=inbox/event/' + receipt.id));
+  assert.equal(calls.includes('/memories?key=inbox/event/' + event.id), false);
+});
+test('a resumed trace still rejects a request bound to another customer', async () => {
+  const calls = [];
+  const provider = createTraceProvider(async (url) => {
+    const path = decodeURIComponent(url);
+    calls.push(path);
+    if (path.startsWith('/emails/')) return {};
+    if (path.includes('inbox/event/'))
+      return { value: { permission_id: 'AAAAAAAAAAAAAAAA' } };
+    if (path.includes('inbox/request/'))
+      return {
+        value: {
+          customer_email: { ...event.email, from_email: 'other@example.com' },
+          receipt_protocol: 'permission.receipt/1',
+        },
+      };
+    assert.fail('must not read a mismatched approval or delivery');
+  });
+  const result = await provider.read({
+    event_id: 'question-answer-receipt',
+    email_id: event.email.id,
+    sender: event.email.from_email,
+  });
+  assert.deepEqual(result, { email: {} });
+  assert.equal(calls.length, 3);
 });
 test('instrumentation persists across reopen, replay adds no events, gateway allow is not completion', async (t) => {
   const { state, traces, id, dir } = setup(t);
@@ -341,7 +443,10 @@ test('a missing checkpoint preserves known email evidence; no provider mutation'
       return { received_at: '2026-10-18T00:00:00Z' };
     throw Object.assign(Error('not_found'), { status: 404 });
   });
-  const result = await provider.read({ email_id: 'email-1' });
+  const result = await provider.read({
+    event_id: 'email-1',
+    email_id: 'email-1',
+  });
   assert.equal(result.email.received_at, '2026-10-18T00:00:00Z');
   assert.equal(result.checkpoint, null);
 });
