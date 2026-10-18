@@ -1,5 +1,5 @@
 {
-  "name": "agent-approval-service",
+  "name": "fluffy",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -43,6 +43,6 @@
   "description": "Email questions and exact-action approvals for agents, built on Primitive.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jerrychangusa/agent-approval-service.git"
+    "url": "git+https://github.com/jerrychangusa/fluffy.git"
   }
 }

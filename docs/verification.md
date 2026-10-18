@@ -39,9 +39,13 @@ A separate six-minute sandbox-idle check returned a signed duplicate's saved che
 
 These are observations from the rehearsal, not a promise that the hosted demo will remain online indefinitely. Raw provider records and live deployment settings stay local and are excluded from Git.
 
-## Video v2
+## Fluffy video and rename
 
-The [1:50 v2 cut](https://youtu.be/3a4yvBBT6DM) reuses the verified recorded journey. It changes pacing, narration, labels and crops; it does not represent a fresh hosted run. The optician request begins at 17.8 seconds, information and permission are labeled separately, and closer native-log views show the matching session before and after approval. The original video remains available as a fallback. The application/runtime code is unchanged.
+The [current 2-minute Fluffy cut](https://youtu.be/THKHfZs5Poc) reuses the verified recorded journey. It adds the user-provided motivation from building AI customer support, explains Jev's place beside the sandboxed Claude runtime, and closes on the intended benefit: fewer full-ticket handoffs and more work completed by the agent. The recording demonstrates the workflow; it does not measure production resolution rates or time savings.
+
+The footage shows real emails and execution records with waiting/navigation removed and a brief held pre-Send frame. It does not represent a fresh hosted run. Earlier cuts remain available in [version history](demo.md#version-history).
+
+Fluffy was previously named Agent Approval Service. The repository/package and client label were renamed; the recorded hosted run predates those labels. Application behavior is unchanged, and no new hosted deployment is claimed for this rename.
 
 ## Rehearsal issue and recovery
 

@@ -1,6 +1,6 @@
 # Architecture
 
-Two Primitive Functions and one Blaxel agent runtime handle the complete workflow. “Approval Service” names the project; questions and approvals are separate reusable services within it.
+Two Primitive Functions and one Blaxel agent runtime handle the complete workflow. Fluffy combines separate, reusable question and approval services.
 
 | Request                | Reply                                                           | What resumes the agent                                                  |
 | ---------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------- |
@@ -48,6 +48,12 @@ sequenceDiagram
 - **Questions:** a configured role maps to a trusted teammate mailbox. The reply must authenticate as that teammate and refer to the exact sent question. An answer is information only; it contains no executable permission. Uncertain or review-routed questions are blocked before forwarding their evidence. Expiry is enforced when a reply arrives.
 - **Approvals:** the exact canonical customer action, case snapshot and evidence hashes are bound to a one-use permission. Sender authentication, reply thread or secret reply code, expiry, immutable hashes, compare-and-swap state, and send idempotency are enforced independently of the agent. Unknown execution outcomes require read-only reconciliation.
 - **Support application:** knows orders, Rx, PD, form fields, messages and case completion. Its trusted executor adapter independently rebuilds fixed information/completion messages. Only the fixed missing-information request is eligible for automatic sending; completion and freeform replies require human approval.
+
+## Where Jev fits
+
+The Blaxel sandbox hosts Claude and the trusted tool gateway. Claude can use only the registered, guarded application tools. Before a handler runs, the gateway calls Jev’s external decision API with the structured call, policy and trusted context. Jev returns `allow`, `review` or `deny`; application code separately enforces hard constraints and mandatory approvals. Jev cannot grant authority that policy withholds.
+
+The internal Primitive Function independently validates and assesses the outgoing request again. Human decisions arrive through that email inbox. The sandbox supplies compute isolation; the gateway and approval protocol enforce the application’s tool permissions.
 
 ## Teammate routing
 

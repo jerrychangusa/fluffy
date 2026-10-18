@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ToolGateway, toolCallHash } from 'agent-approval-service';
+import { ToolGateway, toolCallHash } from 'fluffy';
 
 const allow = { source: 'jev', choice: 'allow', confidence: 0.99 };
 const definition = (overrides = {}) => ({

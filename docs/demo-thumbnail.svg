@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+<rect x="0" y="0" width="1280" height="720" rx="18" fill="#092d28"/>
+<text x="65" y="132.0" fill="#a5efd2" font-family="Arial,sans-serif" font-size="82" text-anchor="start">Fluffy</text>
+<text x="70" y="193.0" fill="#f2faf7" font-family="Arial,sans-serif" font-size="30" text-anchor="start">Human help and approval</text>
+<text x="70" y="230.5" fill="#f2faf7" font-family="Arial,sans-serif" font-size="30" text-anchor="start">for AI agents</text>
+<text x="65" y="378.0" fill="#f2faf7" font-family="Arial,sans-serif" font-size="48" text-anchor="start">More tickets resolved.</text>
+<text x="65" y="438.0" fill="#f2faf7" font-family="Arial,sans-serif" font-size="48" text-anchor="start">Less work handed off.</text>
+<text x="70" y="647.0" fill="#a5efd2" font-family="Arial,sans-serif" font-size="22" text-anchor="start">BUILT WITH PRIMITIVE</text>
+<rect x="880" y="200" width="290" height="120" rx="18" fill="#b7edcf"/>
+<text x="1025.0" y="267.0" fill="#123f34" font-family="Arial,sans-serif" font-size="32" text-anchor="middle">Teammate</text>
+<text x="1025.0" y="388.0" fill="#b7edcf" font-family="Arial,sans-serif" font-size="48" text-anchor="middle">↑        ↓</text>
+<text x="1025.0" y="451.0" fill="#b7edcf" font-family="Arial,sans-serif" font-size="26" text-anchor="middle">Answers + Approvals</text>
+<rect x="880" y="515" width="290" height="100" rx="18" fill="#8c6dc2"/>
+<text x="1025.0" y="574.0" fill="#ffffff" font-family="Arial,sans-serif" font-size="32" text-anchor="middle">AI agent</text>
+</svg>

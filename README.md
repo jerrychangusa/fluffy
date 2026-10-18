@@ -1,8 +1,10 @@
-# Agent Approval Service
+# Fluffy
 
-**Human input and permission, by email.**
+**Human help and approval for AI agents.**
 
-When an agent lacks information or authority, it emails a configured teammate, waits for a reply, and continues the same task. The teammate contributes an answer or permission without taking over the customer conversation.
+Fluffy lets an agent email a configured teammate for missing answers or permission, then resume its task. Human teammates contribute expertise and approval without taking over the whole customer conversation.
+
+While building AI customer support for customers like Partiful, we saw knowledge gaps turn into full-ticket handoffs. Fluffy explores a smaller request: ask the human for the missing piece, so the agent can resolve more tickets from start to finish. The eyewear workflow below demonstrates that pattern; it is not a Partiful integration.
 
 | The agent needs…         | It sends…                                      | The reply provides…             |
 | ------------------------ | ---------------------------------------------- | ------------------------------- |
@@ -11,9 +13,9 @@ When an agent lacks information or authority, it emails a configured teammate, w
 
 Built for YC's **Make Something Agents Want** hackathon, Primitive's **Best Agent Communication Setup** track.
 
-**[Watch the 1:50 v2 demo](https://youtu.be/3a4yvBBT6DM)** · [Architecture](docs/architecture.md) · [Verification and limits](docs/verification.md)
+**[Watch the 2-minute Fluffy demo](https://youtu.be/THKHfZs5Poc)** · [Architecture](docs/architecture.md) · [Verification and limits](docs/verification.md)
 
-[![Escalate the question, not the whole task — watch the demo](docs/demo-thumbnail.png)](https://youtu.be/3a4yvBBT6DM)
+[![Fluffy — human help and approval for AI agents](docs/demo-thumbnail.png)](https://youtu.be/THKHfZs5Poc)
 
 [System overview](docs/system-overview.png) · [Editable Excalidraw](docs/system-overview.excalidraw)
 

@@ -1,8 +1,8 @@
 # Live demo
 
-**Escalate the question, not the whole task.**
+**Human help and approval for AI agents.**
 
-[Watch the 1:50 v2 recording](https://youtu.be/3a4yvBBT6DM) or follow this walkthrough with your own configured inboxes. The v2 cut opens with a real teammate question; the [system overview](system-overview.png) is available for a live presentation.
+[Watch the 2-minute Fluffy recording](https://youtu.be/THKHfZs5Poc) or follow this walkthrough with your own configured inboxes. The Fluffy cut opens with the support problem that motivated the project; the [system overview](system-overview.png) is available for a live presentation.
 
 ## Roles
 
@@ -25,11 +25,11 @@ In the recording, Jerry plays both human roles, using his own two accounts. The 
 7. Review the exact proposed customer message. Approve through **Approve email → Send**, or reply `APPROVE <reference>` in that original thread. The inbox is the approval interface.
 8. Show native Primitive execution and the resumed agent session. Open the final customer response; the internal review files were not forwarded.
 
-Close with: “A teammate provides the missing answer or permission by email. The agent continues helping the customer, without handing over the case.”
+Close with: “Instead of taking over entire tickets, teammates provide the specific answers and approvals the agent needs. Less manual follow-up, less work for the human support team, and more tickets the AI agent can resolve from start to finish.”
 
 ## Recording notes
 
-The 1:50 v2 video is an edited live journey, not an uninterrupted take. It uses the same verified emails as v1, reaches the optician request at 0:18, distinguishes missing information from missing permission, and enlarges the native log fields showing the same agent session resuming. It removes waiting and navigation, uses a prepared fictional form, and holds one genuine pre-Send frame for two seconds for readability. Actual clicks play at recorded speed. Native logs and the final reply were inspected again after execution. Unrelated inbox lists and browser controls are cropped out.
+The 1:59.8 Fluffy video is an edited live journey, not an uninterrupted take. It adds the Partiful support motivation, explains the trusted gateway and external Jev decision API, and closes on reducing full-ticket handoffs. It reuses the verified recorded emails from earlier cuts. Actual clicks play at recorded speed. Waiting and navigation are removed; a genuine pre-Send frame is held for two seconds for readability. Unrelated inbox lists and browser controls are cropped out.
 
 During the recorded rehearsal, a wrapped Gmail quote attribution exposed a reply-parser bug. After fixing and deploying the parser, we replayed the same stored human-approved email through Primitive's documented replay endpoint. The exact action then executed and delivered. This run did not succeed on its first delivery; see [verification](verification.md).
 
@@ -39,7 +39,8 @@ Each live run needs a new conversation. The example backend supports the configu
 
 ## Version history
 
-- [V2: tighter 1:50 cut](https://youtu.be/3a4yvBBT6DM): current submission video.
+- [Fluffy: current 2-minute submission](https://youtu.be/THKHfZs5Poc): motivation, live email flow, Jev/sandbox overview, and impact.
+- [V2: tighter 1:50 cut](https://youtu.be/3a4yvBBT6DM): previous presentation.
 - [V1: original 1:58 cut](https://youtu.be/uBpWsKtDoRw): preserved as a fallback.
 
-The application code and deployed runtime are unchanged by this presentation revision.
+The package name and client label now use Fluffy. The recorded journey uses the previously deployed runtime; this branding revision makes no change to application behavior and does not claim a fresh hosted deployment.

@@ -100,7 +100,7 @@ export function createHarness({
           HOME: directory,
           CLAUDE_CONFIG_DIR: configDirectory,
           ANTHROPIC_API_KEY: apiKey,
-          CLAUDE_AGENT_SDK_CLIENT_APP: 'agent-approval-service/0.1.0',
+          CLAUDE_AGENT_SDK_CLIENT_APP: 'fluffy/0.1.0',
         },
         systemPrompt: EMAIL_APPROVAL_INSTRUCTIONS + '\n\n' + systemPrompt,
         stderr: () => {},
