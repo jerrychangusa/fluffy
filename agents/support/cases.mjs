@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { readIntakeForm } from './form.mjs';
+import { validEmailAddress } from '../../src/shared/configuration.mjs';
 
 const digest = (value) =>
   createHash('sha256').update(JSON.stringify(value)).digest('hex');
@@ -8,14 +9,26 @@ const reference = ({ content_base64, review_status, ...file }) => file;
 // Local administrative intake backend. Each customer thread owns one case.
 // Supplied measurements remain unverified; clinical interpretation is a human task.
 export class CaseStore {
-  constructor({ state, customerEmail, orderId, now = () => Date.now() }) {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail || ''))
+  constructor({
+    state,
+    customerEmail,
+    customerAccess = 'allowlist',
+    orderId,
+    now = () => Date.now(),
+  }) {
+    if (!['allowlist', 'authenticated'].includes(customerAccess))
+      throw new Error('invalid_customer_access');
+    if (
+      customerAccess !== 'authenticated' &&
+      !validEmailAddress(customerEmail?.toLowerCase())
+    )
       throw new Error('customer_email_required');
     if (!/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$/.test(orderId || ''))
       throw new Error('order_id_required');
     Object.assign(this, {
       state,
-      customerEmail: customerEmail.toLowerCase(),
+      customerEmail: customerEmail?.toLowerCase(),
+      customerAccess,
       orderId,
       now,
     });
@@ -23,14 +36,22 @@ export class CaseStore {
 
   bind(event, conversation) {
     const email = event.email || conversation.latest_email;
-    if (email?.from_email !== this.customerEmail)
+    const customer = email?.from_email?.toLowerCase();
+    if (
+      !validEmailAddress(customer) ||
+      (this.customerAccess !== 'authenticated' &&
+        customer !== this.customerEmail)
+    )
       throw new Error('case_customer_mismatch');
     const key = 'support/case/' + event.conversation_id;
-    if (!this.state.get(key))
+    const existing = this.state.get(key);
+    if (existing && existing.customer_email !== customer)
+      throw new Error('case_customer_mismatch');
+    if (!existing)
       this.state.put(key, {
         id: event.conversation_id,
         order_id: this.orderId,
-        customer_email: this.customerEmail,
+        customer_email: customer,
         prescription: null,
         pd: null,
         form: null,

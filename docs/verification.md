@@ -21,7 +21,7 @@ npm run verify
 | Architecture test       | Shared infrastructure cannot import the support application outside composition roots                                              |
 | Formatting and build    | Readable source and both generated Primitive Function bundles                                                                      |
 
-The suite contains **115 passing tests**. Its default model and transport adapters are deterministic fixtures, not live Claude, Jev or SMTP. Tests exercise the actual application and infrastructure services. GitHub Actions runs the same `npm run verify` command on Node 24 without credentials. [Operations](operations.md) documents the optional real-model test, which still uses isolated mail transport.
+The suite contains **121 passing tests**. Its default model and transport adapters are deterministic fixtures, not live Claude, Jev or SMTP. Tests exercise the actual application and infrastructure services. GitHub Actions runs the same `npm run verify` command on Node 24 without credentials. [Operations](operations.md) documents the optional real-model test, which still uses isolated mail transport.
 
 ## Hosted checks
 
@@ -39,6 +39,12 @@ A separate six-minute sandbox-idle check returned a signed duplicate's saved che
 
 These are observations from the rehearsal, not a promise that the hosted demo will remain online indefinitely. Raw provider records and live deployment settings stay local and are excluded from Git.
 
+## Open customer access
+
+On October 18, we deployed authenticated customer access to both Primitive Functions and the Blaxel runtime. Both Function source hashes and all 25 packaged runtime files matched local source; the process was healthy and all four routes were enabled. Two previously rejected customer emails passed the updated sender check and source-bound recipient validation without replaying or replying to those stored messages.
+
+A fresh email from an address outside the previous customer allowlist triggered the live agent and delivered its intake reply with the fillable PDF attached. This checks admission, model execution and reply delivery; the complete question and approval round trip in both access modes is covered by the local workflow tests. The human reviewer remains configured, and each customer receives a separate case. Email authentication remains required.
+
 ## Fluffy video and rename
 
 The [current 2-minute Fluffy cut](https://youtu.be/THKHfZs5Poc) reuses the verified recorded journey. It adds the user-provided motivation from building AI customer support, explains Jev's place beside the sandboxed Claude runtime, and closes on the intended benefit: fewer full-ticket handoffs and more work completed by the agent. The recording demonstrates the workflow; it does not measure production resolution rates or time savings.
@@ -55,7 +61,7 @@ The parser accepts a complete attribution over up to four consecutive nonempty, 
 
 ## Deliberate scope
 
-- The support backend serves one configured customer and order, with separate cases per email thread. It has no production customer/order API.
+- The support backend serves a configured example order, with separate cases per customer thread. Restricted mode uses a customer allowlist; authenticated mode accepts other verified email senders and binds every outgoing recipient to the source customer email. It has no production customer/order API.
 - The PDF reader extracts named fields from our own fillable form. It does not OCR arbitrary scanned PDFs. The model can view supported image attachments; that is not clinical validation.
 - Administrative intake completion does not mean prescription approval, healthcare compliance, order acceptance or fulfillment.
 - The runtime uses one process and local SQLite state. A distributed worker pool, automatic reminders and reassignment are not implemented.

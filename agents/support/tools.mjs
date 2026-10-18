@@ -221,7 +221,7 @@ export function createSupportTools(cases, { assess } = {}) {
       context: {
         authenticated_customer: email.from_email,
         case_binding_verified: true,
-        order_customer_binding_verified: true,
+        customer_conversation_binding_verified: true,
         bound_order_id: cases.orderId,
         local_case_read_and_unverified_intake_write_authorized: true,
         configured_teammate_role: 'optician',

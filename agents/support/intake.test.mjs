@@ -62,6 +62,33 @@ async function completedForm(order = '1042', pd = '31 / 31') {
   document.getForm().getTextField('pd_text').setText(pd);
   return Buffer.from(await document.save());
 }
+
+test('open support access creates isolated cases for new senders and pins each case owner', async (t) => {
+  const { state, event } = setup(t);
+  const cases = new CaseStore({
+    state,
+    customerAccess: 'authenticated',
+    orderId: '1042',
+  });
+  const first = cases.read(event, {});
+  const other = {
+    ...event,
+    conversation_id: 'case-2',
+    email: {
+      ...event.email,
+      from_email: 'other@example.com',
+      body_text: 'My PD is 62',
+    },
+  };
+  await cases.record(other, {}, { pd_text: '62' });
+  assert.equal(cases.read(other, {}).customer_email, 'other@example.com');
+  assert.equal(cases.read(event, {}).pd, null);
+  assert.equal(first.customer_email, event.email.from_email);
+  assert.throws(
+    () => cases.read({ ...other, conversation_id: event.conversation_id }, {}),
+    /customer_mismatch/,
+  );
+});
 const decode = (result) => JSON.parse(result.content[0].text);
 
 test('returned PDF supplies exact PD with provenance; cases isolate customers and threads', async (t) => {

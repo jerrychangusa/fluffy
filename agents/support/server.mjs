@@ -26,6 +26,7 @@ const cases = new CaseStore({
   state,
   now: clock.now,
   customerEmail: process.env.SUPPORT_CUSTOMER_EMAIL,
+  customerAccess: process.env.SUPPORT_CUSTOMER_ACCESS || 'allowlist',
   orderId: process.env.SUPPORT_ORDER_ID,
 });
 const run = createHarness({

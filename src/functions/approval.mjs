@@ -1,6 +1,7 @@
 import { emailFunction } from '../integrations/primitive/email-function.mjs';
 import { createMemoryStore } from '../integrations/primitive/memories.mjs';
 import { createWakeDispatcher } from '../integrations/primitive/wake.mjs';
+import { verifyCustomerRequest } from '../integrations/primitive/customer.mjs';
 import { ApprovalService } from '../approval/service.mjs';
 import { QuestionService, questionReference } from '../questions/service.mjs';
 import { assessToolCall } from '../integrations/jev/client.mjs';
@@ -14,13 +15,19 @@ import {
 // Application rules enter here; the generic services know nothing about eyewear.
 export default emailFunction('approval', async (email, env, { api, mail }) => {
   const config = JSON.parse(env.APPROVAL_CONFIG);
-  let protocol;
+  let input;
   try {
-    protocol = JSON.parse(email.parsed?.body_text).protocol;
+    input = JSON.parse(email.parsed?.body_text);
   } catch {}
+  if (
+    email.recipient === config.approval_address &&
+    ['question.request/1', 'permission.request/1'].includes(input?.protocol)
+  )
+    await verifyCustomerRequest(input, email, config, api);
   const question =
     email.recipient === config.approval_address &&
-    (protocol === 'question.request/1' || !!questionReference(email.subject));
+    (input?.protocol === 'question.request/1' ||
+      !!questionReference(email.subject));
   const service = question
     ? new QuestionService({
         store: createMemoryStore(api, 'questions'),

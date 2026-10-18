@@ -48,7 +48,16 @@ async function configureRuntime(sandbox) {
     'AGENT_STATE_DIR=' + stateDirectory,
     'AGENT_MODEL=' + (process.env.AGENT_MODEL || 'claude-sonnet-5-5'),
     ...(agentEntry === 'agents/support/server.mjs'
-      ? ['SUPPORT_CUSTOMER_EMAIL=' + previousDeployment.allowed_customers[0]]
+      ? [
+          'SUPPORT_CUSTOMER_ACCESS=' +
+            (previousDeployment.customer_access || 'allowlist'),
+          ...(previousDeployment.customer_access === 'authenticated'
+            ? []
+            : [
+                'SUPPORT_CUSTOMER_EMAIL=' +
+                  previousDeployment.allowed_customers[0],
+              ]),
+        ]
       : []),
     ...(previousDeployment.order_id
       ? ['SUPPORT_ORDER_ID=' + previousDeployment.order_id]
@@ -132,10 +141,14 @@ for (const key of [
   }
 }
 
-if (!previousDeployment.allowed_customers?.length)
+if (
+  previousDeployment.customer_access !== 'authenticated' &&
+  !previousDeployment.allowed_customers?.length
+)
   throw new Error('At least one allowed customer is required');
 if (
   agentEntry === 'agents/support/server.mjs' &&
+  previousDeployment.customer_access !== 'authenticated' &&
   previousDeployment.allowed_customers.length !== 1
 )
   throw new Error('The support agent requires one configured customer');

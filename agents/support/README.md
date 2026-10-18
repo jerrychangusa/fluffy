@@ -12,4 +12,4 @@ The application owns prescription-intake rules. Shared infrastructure owns trans
 
 Only `request_information` is eligible for automatic customer email, after both gateway and executor checks. `complete_intake` and freeform `send_email` always require approval. `ask_teammate` requests information from the configured optician; the answer resumes the agent and cannot authorize execution.
 
-The local backend uses one configured customer/order number and separate cases per thread. It records receipt of data and administrative completion, not clinical validation. Customer documents remain unverified until a human reviews them.
+The local backend uses one configured example order number and separate cases per customer thread. Access can be restricted to a configured customer or opened to any email-authenticated sender. Each case remains bound to its original sender. It records receipt of data and administrative completion, not clinical validation. Customer documents remain unverified until a human reviews them.

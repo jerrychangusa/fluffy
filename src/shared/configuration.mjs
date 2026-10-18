@@ -1,5 +1,8 @@
 const EMAIL = /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
 
+export const validEmailAddress = (value) =>
+  typeof value === 'string' && EMAIL.test(value);
+
 function address(config, key) {
   if (typeof config[key] !== 'string' || !EMAIL.test(config[key])) {
     throw new Error('invalid_config_' + key);
@@ -14,6 +17,11 @@ function addresses(config, key) {
 }
 
 function mailConfig(config) {
+  if (
+    config.customer_access !== undefined &&
+    !['allowlist', 'authenticated'].includes(config.customer_access)
+  )
+    throw new Error('invalid_config_customer_access');
   for (const key of [
     'requester_address',
     'approval_address',
@@ -33,7 +41,8 @@ export function approvalConfig(config) {
   mailConfig(config);
   address(config, 'execution_address');
   address(config, 'approver');
-  addresses(config, 'allowed_recipients');
+  if (config.customer_access !== 'authenticated')
+    addresses(config, 'allowed_recipients');
   if (config.approver_timezone !== undefined) {
     try {
       if (
@@ -59,7 +68,8 @@ export function approvalConfig(config) {
 
 export function inboxConfig(config) {
   mailConfig(config);
-  addresses(config, 'allowed_customers');
+  if (config.customer_access !== 'authenticated')
+    addresses(config, 'allowed_customers');
   const url = new URL(config.agent_url);
   if (
     url.protocol !== 'https:' ||

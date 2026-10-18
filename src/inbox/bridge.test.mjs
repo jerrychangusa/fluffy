@@ -140,6 +140,27 @@ test('unauthenticated inbound email cannot start a model run', async () => {
   assert.equal(fixture.countAgentRuns(), 0);
 });
 
+test('open customer access starts a new sender conversation and carries its source reference', async () => {
+  const fixture = setupBridge();
+  fixture.bridge.config.customer_access = 'authenticated';
+  fixture.bridge.config.allowed_customers = [];
+  const email = { ...customerEmail(), from_email: 'new-customer@gmail.com' };
+  await fixture.bridge.receive(email);
+  const request = JSON.parse(fixture.sentEmails[0].body.body_text);
+  assert.equal(request.action.to, email.from_email);
+  assert.equal(request.context.customer_email_id, email.id);
+  const other = {
+    ...email,
+    id: crypto.randomUUID(),
+    from_email: 'another@gmail.com',
+  };
+  await assert.rejects(
+    fixture.bridge.receive(other),
+    /conversation_customer_mismatch/,
+  );
+  assert.equal(fixture.countAgentRuns(), 1);
+});
+
 test('send timeout retries the frozen proposal without another model run', async () => {
   const fixture = setupBridge();
   const send = fixture.bridge.mail.send;

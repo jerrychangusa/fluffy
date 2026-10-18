@@ -43,7 +43,7 @@ npm run demo
 npm run verify
 ```
 
-`demo` exercises the complete attachment → form → teammate answer → approval → completion journey through the actual services, using a deterministic model adapter and in-memory mail transport. It sends no real emails. `verify` runs all **115 tests**, checks formatting, and builds both Primitive Functions. Real hosted email and model verification are documented separately in [verification](docs/verification.md).
+`demo` exercises the complete attachment → form → teammate answer → approval → completion journey through the actual services, using a deterministic model adapter and in-memory mail transport. It sends no real emails. `verify` runs all **121 tests**, checks formatting, and builds both Primitive Functions. Real hosted email and model verification are documented separately in [verification](docs/verification.md).
 
 ## Read the code in this order
 
@@ -78,4 +78,4 @@ The support agent is one application. The gateway, session runtime, inbox bridge
 
 For a real inbox, follow [deployment and operations](docs/operations.md). Versioned configuration files are examples; live resource IDs, credentials, state, and rehearsal logs are excluded from Git. [Live walkthrough instructions](docs/demo.md) describe the email roles and preparation.
 
-This example records administrative intake for one configured customer and order. It does not perform clinical validation, integrate with a production order system, or fulfill an order. See [verification and limits](docs/verification.md) for exactly what was tested.
+This example records administrative intake for a configured example order, with isolated cases per customer thread. Customer access can use an allowlist or accept any email-authenticated sender. It does not perform clinical validation, integrate with a production order system, or fulfill an order. See [verification and limits](docs/verification.md) for exactly what was tested.

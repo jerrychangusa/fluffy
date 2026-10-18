@@ -35,7 +35,7 @@ During the recorded rehearsal, a wrapped Gmail quote attribution exposed a reply
 
 Chris narration uses ElevenLabs for this noncommercial hackathon submission. Keep `elevenlabs.io` in the publication title; it is also present in the video's title metadata and footer.
 
-Each live run needs a new conversation. The example backend supports the configured customer and order `1042`; it does not clinically validate a prescription or fulfill an order.
+Each live run needs a new conversation. The example backend supports order `1042`. With `customer_access: authenticated`, other testers can use their own email and get separate cases; restricted mode uses the configured customer. It does not clinically validate a prescription or fulfill an order.
 
 ## Version history
 

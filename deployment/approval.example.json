@@ -11,5 +11,6 @@
   "approver_timezone": "America/Los_Angeles",
   "teammates": {
     "optician": "reviewer@example.com"
-  }
+  },
+  "customer_access": "allowlist"
 }

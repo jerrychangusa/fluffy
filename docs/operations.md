@@ -8,7 +8,7 @@ The deployment scripts **update existing resources**. They do not create account
 
 1. In Primitive, provision your email domain and two Functions: the customer inbox Function and the internal approval/question Function. Record their IDs and your domain's DKIM selector.
 2. Provision a Blaxel sandbox with Node 24, Python 3, npm, a persistent filesystem, port 8000, and its HTTPS preview URL. Authenticate the Blaxel SDK for the workspace containing that sandbox.
-3. Copy `deployment/approval.example.json` to `deployment/approval.json` and `deployment/support-inbox.example.json` to `deployment/support-inbox.json`. Replace the placeholder IDs, domain, customer, reviewer, sandbox and agent URL. The actual configuration files are ignored by Git. Keep the customer allowlist to one address for this example backend; `order_id` selects its single configured order.
+3. Copy `deployment/approval.example.json` to `deployment/approval.json` and `deployment/support-inbox.example.json` to `deployment/support-inbox.json`. Replace the placeholder IDs, domain, customer, reviewer, sandbox and agent URL. The actual configuration files are ignored by Git. By default, keep the customer allowlist to one address. To let others test, set `customer_access` to `authenticated` in both configuration files. The inbox still requires DMARC and aligned DKIM; the runtime creates an isolated case for each sender/thread. The internal Function reloads the original authenticated customer email before allowing a reply recipient. Reviewer and receipt authentication are unchanged. `order_id` selects the example order number; it is not a production order lookup.
 4. Configure these four exact-address routes in Primitive:
 
 | Address                                 | Destination                                          |
@@ -45,11 +45,13 @@ Agent deployment preserves the source tree in a new release directory, installs 
 
 After deployment, refetch Function sources, compare the deployed runtime files, inspect `/health`, verify that unsigned `/events` requests are rejected, and check all four enabled routes. Then run a fresh customer email → teammate reply → approval walkthrough. Health checks and local tests alone do not establish email delivery.
 
-To run the agent server locally instead, set `AGENT_STATE_DIR`, `AGENT_BRIDGE_SECRET`, `ANTHROPIC_API_KEY`, `TYPESAFE_API_KEY`, `SUPPORT_CUSTOMER_EMAIL` and `SUPPORT_ORDER_ID` in your private environment file, then:
+To run the agent server locally instead, set `AGENT_STATE_DIR`, `AGENT_BRIDGE_SECRET`, `ANTHROPIC_API_KEY`, `TYPESAFE_API_KEY`, `SUPPORT_CUSTOMER_ACCESS`, `SUPPORT_CUSTOMER_EMAIL` and `SUPPORT_ORDER_ID` in your private environment file, then:
 
 ```sh
 node --env-file=/absolute/private/agent.env agents/support/server.mjs
 ```
+
+Use `SUPPORT_CUSTOMER_ACCESS=authenticated` to accept any authenticated customer; `SUPPORT_CUSTOMER_EMAIL` is then optional.
 
 This starts the agent endpoint; it does not configure inbound email or expose a public URL.
 

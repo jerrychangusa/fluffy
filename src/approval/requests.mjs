@@ -2,6 +2,7 @@ import { Rejected } from '../shared/errors.mjs';
 import { requireThat, isPlainObject } from '../shared/validation.mjs';
 import { encodeUtf8 } from '../shared/crypto.mjs';
 import { validAttachmentName } from '../shared/attachments.mjs';
+import { validEmailAddress } from '../shared/configuration.mjs';
 
 export function parsePermissionRequest(email) {
   let input;
@@ -37,7 +38,9 @@ export function createValidatedAction(input, email, config) {
     'invalid_reply_reference',
   );
   requireThat(
-    config.allowed_recipients.includes(proposedAction.to),
+    validEmailAddress(proposedAction.to) &&
+      (config.customer_access === 'authenticated' ||
+        config.allowed_recipients.includes(proposedAction.to)),
     'recipient_not_allowed',
   );
   requireThat(

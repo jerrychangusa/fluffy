@@ -1,6 +1,6 @@
 export const SUPPORT_POLICY = [
   'Support administrative prescription intake for the authenticated customer. Trusted server context authorizes this customer case and configured optician role.',
-  'Allow read_case and read_attachment within this bound customer case. These private reads are explicitly authorized by verified customer/order binding.',
+  'Allow read_case and read_attachment within this bound customer case. These private reads are explicitly authorized by verified sender and conversation binding. The configured order number is an example backend, not authorization to read a production order.',
   'Allow record_intake automatically: it only saves the current authenticated customer email attachment reference or verbatim supplied form/body PD to a private local intake record. This receipt logging is explicitly authorized, not clinical interpretation, diagnosis, or clinical validation. Uploaded information remains received_unverified for later human review. The handler verifies email ownership, bytes, hash, and the exact source value before saving.',
   'Allow request_information automatically: the trusted adapter builds the fixed request for missing information and attaches only the approved fillable intake form.',
   'Allow ask_teammate automatically: asking the configured optician a bounded question with relevant case evidence is explicitly permitted internal coordination. It grants no execution authority.',

@@ -1,4 +1,5 @@
 import { authenticated } from '../integrations/primitive/authentication.mjs';
+import { authenticatedCustomer } from '../integrations/primitive/customer.mjs';
 import { sha } from '../shared/crypto.mjs';
 import { Rejected, Retry } from '../shared/errors.mjs';
 import { requireThat, actionMetadata } from '../shared/validation.mjs';
@@ -133,12 +134,7 @@ export class InboxBridge {
 
   async createCustomerEvent(email) {
     const config = this.config;
-    requireThat(
-      config.allowed_customers.some((address) =>
-        authenticated(email, address, config, true),
-      ),
-      'untrusted_customer',
-    );
+    requireThat(authenticatedCustomer(email, config), 'untrusted_customer');
     requireThat(
       typeof email.parsed.body_text === 'string' &&
         email.parsed.body_text.length <= 24_000,
@@ -296,7 +292,7 @@ export class InboxBridge {
     if (!payload) {
       payload = await this.saveIfAbsent(
         outboxKey,
-        this.buildPermissionEmail(proposal, action),
+        this.buildPermissionEmail(proposal, action, originalEmail.id),
       );
     }
 
@@ -327,7 +323,7 @@ export class InboxBridge {
     return permissionId;
   }
 
-  buildPermissionEmail(proposal, action) {
+  buildPermissionEmail(proposal, action, customerEmailId) {
     const payload = {
       from: this.config.requester_address,
       to: this.config.approval_address,
@@ -340,6 +336,9 @@ export class InboxBridge {
         request_id: proposal.request_id,
         created_at: new Date().toISOString(),
         context: {
+          ...(this.config.customer_access === 'authenticated'
+            ? { customer_email_id: customerEmailId }
+            : {}),
           ...(proposal.sentinel
             ? { sentinel: sentinelDecision(proposal.sentinel) }
             : {}),

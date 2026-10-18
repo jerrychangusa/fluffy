@@ -5,5 +5,6 @@
   "allowed_customers": ["customer@example.com"],
   "agent_entry": "agents/support/server.mjs",
   "state_namespace": "prescription-intake",
-  "order_id": "1042"
+  "order_id": "1042",
+  "customer_access": "allowlist"
 }
