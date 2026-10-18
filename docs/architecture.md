@@ -42,6 +42,10 @@ sequenceDiagram
 - **Approvals:** the exact canonical customer action, case snapshot and evidence hashes are bound to a one-use permission. Sender authentication, reply thread or secret reply code, expiry, immutable hashes, compare-and-swap state, and send idempotency are enforced independently of the agent. Unknown execution outcomes require read-only reconciliation.
 - **Support application:** knows orders, Rx, PD, form fields, messages and case completion. Its trusted executor adapter independently rebuilds fixed information/completion messages. Only the fixed missing-information request is eligible for automatic sending; completion and freeform replies require human approval.
 
+## Teammate routing
+
+Questions address a configured role, and `QuestionService` resolves that role to a trusted mailbox. The support application currently uses the `optician` role for information requests; the model does not supply an arbitrary recipient address. Approval requests separately target the configured `approver`. One person can fill both roles, as in the recorded demo. Other applications can supply more roles through the same trusted mapping.
+
 ## Files and state
 
 Incoming files are verified against Primitive's size and SHA-256 metadata. Large files remain provider references in Memories and are hydrated only at execution boundaries. References must belong to the authenticated customer. A permission request may carry output attachments and review-only evidence; the latter is hash-bound and visible to the reviewer but never forwarded to the customer.

@@ -2,7 +2,7 @@
 
 **Escalate the question, not the whole task.**
 
-[Watch the 1:58 recording](https://youtu.be/uBpWsKtDoRw) or follow this walkthrough with your own configured inboxes. The [system overview](system-overview.png) takes about six seconds to explain.
+[Watch the 1:50 v2 recording](https://youtu.be/3a4yvBBT6DM) or follow this walkthrough with your own configured inboxes. The v2 cut opens with a real teammate question; the [system overview](system-overview.png) is available for a live presentation.
 
 ## Roles
 
@@ -29,10 +29,17 @@ Close with: “A teammate provides the missing answer or permission by email. Th
 
 ## Recording notes
 
-The 1:58 video is an edited live journey, not an uninterrupted take. It removes waiting and navigation, uses a prepared fictional form, and holds one genuine pre-Send frame briefly for readability. Actual clicks play at recorded speed. Native logs and the final reply were inspected again after execution. Unrelated inbox lists and browser controls are cropped out.
+The 1:50 v2 video is an edited live journey, not an uninterrupted take. It uses the same verified emails as v1, reaches the optician request at 0:18, distinguishes missing information from missing permission, and enlarges the native log fields showing the same agent session resuming. It removes waiting and navigation, uses a prepared fictional form, and holds one genuine pre-Send frame for two seconds for readability. Actual clicks play at recorded speed. Native logs and the final reply were inspected again after execution. Unrelated inbox lists and browser controls are cropped out.
 
 During the recorded rehearsal, a wrapped Gmail quote attribution exposed a reply-parser bug. After fixing and deploying the parser, we replayed the same stored human-approved email through Primitive's documented replay endpoint. The exact action then executed and delivered. This run did not succeed on its first delivery; see [verification](verification.md).
 
 Chris narration uses ElevenLabs for this noncommercial hackathon submission. Keep `elevenlabs.io` in the publication title; it is also present in the video's title metadata and footer.
 
 Each live run needs a new conversation. The example backend supports the configured customer and order `1042`; it does not clinically validate a prescription or fulfill an order.
+
+## Version history
+
+- [V2: tighter 1:50 cut](https://youtu.be/3a4yvBBT6DM): current submission video.
+- [V1: original 1:58 cut](https://youtu.be/uBpWsKtDoRw): preserved as a fallback.
+
+The application code and deployed runtime are unchanged by this presentation revision.

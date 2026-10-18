@@ -6,9 +6,9 @@ When an agent lacks information or authority, it emails the right teammate, wait
 
 Built for YC's **Make Something Agents Want** hackathon, Primitive's **Best Agent Communication Setup** track.
 
-**[Watch the 1:58 demo](https://youtu.be/uBpWsKtDoRw)** · [Architecture](docs/architecture.md) · [Verification and limits](docs/verification.md)
+**[Watch the 1:50 v2 demo](https://youtu.be/3a4yvBBT6DM)** · [Architecture](docs/architecture.md) · [Verification and limits](docs/verification.md)
 
-[![Escalate the question, not the whole task — watch the demo](docs/demo-thumbnail.png)](https://youtu.be/uBpWsKtDoRw)
+[![Escalate the question, not the whole task — watch the demo](docs/demo-thumbnail.png)](https://youtu.be/3a4yvBBT6DM)
 
 [System overview](docs/system-overview.png) · [Editable Excalidraw](docs/system-overview.excalidraw)
 

@@ -39,6 +39,10 @@ A separate six-minute sandbox-idle check returned a signed duplicate's saved che
 
 These are observations from the rehearsal, not a promise that the hosted demo will remain online indefinitely. Raw provider records and live deployment settings stay local and are excluded from Git.
 
+## Video v2
+
+The [1:50 v2 cut](https://youtu.be/3a4yvBBT6DM) reuses the verified recorded journey. It changes pacing, narration, labels and crops; it does not represent a fresh hosted run. The optician request begins at 17.8 seconds, information and permission are labeled separately, and closer native-log views show the matching session before and after approval. The original video remains available as a fallback. The application/runtime code is unchanged.
+
 ## Rehearsal issue and recovery
 
 The video run exposed a Gmail quote-parser bug: Gmail wrapped `On … wrote:` over two lines, so an otherwise valid approval was initially ignored. We fixed the parser, added four regression tests, deployed the updated internal Function, and verified its source. The **same stored human-approved reply** was replayed using Primitive's email replay endpoint; the exact frozen action then executed and delivered. No replacement approval was fabricated. The recording is an edited walkthrough of this recovered run, not an uncut first-attempt success.
