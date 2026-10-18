@@ -1,0 +1,330 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "fluffy.trace/1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol",
+    "trace_id",
+    "status",
+    "observed_at",
+    "source_revision",
+    "email",
+    "events",
+    "approval",
+    "delivery",
+    "completeness"
+  ],
+  "properties": {
+    "protocol": {
+      "const": "fluffy.trace/1"
+    },
+    "trace_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{32}$"
+    },
+    "status": {
+      "enum": [
+        "running",
+        "completed",
+        "waiting_for_approval",
+        "waiting_for_execution",
+        "waiting_for_teammate",
+        "needs_attention",
+        "pending",
+        "approved",
+        "denied",
+        "revoked",
+        "blocked",
+        "expired",
+        "executed",
+        "executing",
+        "execution_unknown",
+        "execution_failed",
+        "answered",
+        "changes_requested",
+        "unknown"
+      ]
+    },
+    "observed_at": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source_revision": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "email": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["received_at"],
+      "properties": {
+        "received_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "maxItems": 264,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "sequence",
+          "at",
+          "type",
+          "title",
+          "status",
+          "tool",
+          "decision",
+          "reason_code",
+          "provenance"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": {
+            "enum": [
+              "event_received",
+              "run_started",
+              "session_started",
+              "action_requested",
+              "gateway_decision",
+              "tool_started",
+              "tool_succeeded",
+              "tool_failed",
+              "approval_requested",
+              "approval_assessed",
+              "approval_approved",
+              "approval_denied",
+              "approval_revoked",
+              "approval_changes_requested",
+              "approval_blocked",
+              "approval_executing",
+              "approval_execution_unknown",
+              "approval_approval_requested",
+              "approval_notification_unknown",
+              "approval_notification_delivery",
+              "approval_execution_delivery",
+              "approval_receipt_delivery",
+              "approval_wake_requested",
+              "approval_wake_dispatched",
+              "approval_wake_unknown"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "running",
+              "completed",
+              "waiting_for_approval",
+              "waiting_for_execution",
+              "waiting_for_teammate",
+              "needs_attention",
+              "pending",
+              "approved",
+              "denied",
+              "revoked",
+              "blocked",
+              "expired",
+              "executed",
+              "executing",
+              "execution_unknown",
+              "execution_failed",
+              "answered",
+              "changes_requested",
+              "unknown",
+              "observed",
+              "succeeded",
+              "failed"
+            ]
+          },
+          "tool": {
+            "enum": [
+              "read_case",
+              "read_attachment",
+              "record_intake",
+              "request_information",
+              "ask_teammate",
+              "complete_intake",
+              "send_email",
+              null
+            ]
+          },
+          "decision": {
+            "enum": ["allow", "review", "deny", null]
+          },
+          "reason_code": {
+            "type": "null"
+          },
+          "provenance": {
+            "enum": ["agent", "agent_checkpoint", "primitive_memory"]
+          }
+        }
+      }
+    },
+    "approval": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "created_at", "expires_at", "decided_at"],
+          "properties": {
+            "status": {
+              "enum": [
+                "running",
+                "completed",
+                "waiting_for_approval",
+                "waiting_for_execution",
+                "waiting_for_teammate",
+                "needs_attention",
+                "pending",
+                "approved",
+                "denied",
+                "revoked",
+                "blocked",
+                "expired",
+                "executed",
+                "executing",
+                "execution_unknown",
+                "execution_failed",
+                "answered",
+                "changes_requested",
+                "unknown"
+              ]
+            },
+            "created_at": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "expires_at": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "decided_at": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "delivery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "provider_status", "observed_at"],
+      "properties": {
+        "state": {
+          "enum": ["delivered", "failed", "pending_delivery", "unknown"]
+        },
+        "provider_status": {
+          "enum": [
+            "queued",
+            "pending",
+            "sending",
+            "sent",
+            "delivered",
+            "bounced",
+            "gate_denied",
+            "agent_failed",
+            "canceled",
+            null
+          ]
+        },
+        "observed_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "completeness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "live_connected",
+        "tool_completion_events_available",
+        "history_truncated",
+        "timestamps_partial"
+      ],
+      "properties": {
+        "live_connected": {
+          "type": "boolean"
+        },
+        "tool_completion_events_available": {
+          "type": "boolean"
+        },
+        "history_truncated": {
+          "type": "boolean"
+        },
+        "timestamps_partial": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

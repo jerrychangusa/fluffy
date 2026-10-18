@@ -1,8 +1,11 @@
 // Credentials come from a private environment file. Blaxel authentication uses
-// the logged-in CLI account; the sandbox never receives a Primitive API key.
+// the logged-in CLI account. Primitive credentials enter the trusted runtime
+// only when the read-only trace provider is explicitly enabled.
 import { SandboxInstance } from '@blaxel/core';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import { createAgentArchive } from './lib/agent-archive.mjs';
+import { traceEnvironment } from './lib/trace-environment.mjs';
 
 const deploymentFile = new URL(
   '../deployment/support-inbox.json',
@@ -62,6 +65,7 @@ async function configureRuntime(sandbox) {
     ...(previousDeployment.order_id
       ? ['SUPPORT_ORDER_ID=' + previousDeployment.order_id]
       : []),
+    ...Object.entries(traceConfig).map(([key, value]) => key + '=' + value),
     'AGENT_PORT=8000',
     '',
   ].join('\n');
@@ -120,6 +124,15 @@ if (
   !/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$/.test(previousDeployment.order_id || '')
 )
   throw new Error('A configured order_id is required');
+const traceConfig = traceEnvironment(
+  process.env,
+  process.env.TRACE_ENABLED === 'true' && !process.env.SOURCE_REVISION
+    ? execFileSync('git', ['rev-parse', 'HEAD'], {
+        cwd: new URL('..', import.meta.url),
+        encoding: 'utf8',
+      }).trim()
+    : undefined,
+);
 if (process.argv.includes('--dry-run')) {
   const archive = await createAgentArchive(agentEntry);
   console.log({

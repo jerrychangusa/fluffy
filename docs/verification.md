@@ -21,7 +21,7 @@ npm run verify
 | Architecture test       | Shared infrastructure cannot import the support application outside composition roots                                              |
 | Formatting and build    | Readable source and both generated Primitive Function bundles                                                                      |
 
-The suite contains **121 passing tests**. Its default model and transport adapters are deterministic fixtures, not live Claude, Jev or SMTP. Tests exercise the actual application and infrastructure services. GitHub Actions runs the same `npm run verify` command on Node 24 without credentials. [Operations](operations.md) documents the optional real-model test, which still uses isolated mail transport.
+The suite contains **142 passing tests**. Its default model and transport adapters are deterministic fixtures, not live Claude, Jev or SMTP. Tests exercise the actual application and infrastructure services. GitHub Actions runs the same `npm run verify` command on Node 24 without credentials. [Operations](operations.md) documents the optional real-model test, which still uses isolated mail transport.
 
 ## Hosted checks
 

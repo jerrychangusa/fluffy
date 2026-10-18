@@ -35,6 +35,7 @@ export function createHarness({
     requestAction,
     onSession,
     onDecision,
+    onExecution,
   }) {
     if (!apiKey) {
       throw new Error('anthropic_key_not_configured');
@@ -47,6 +48,7 @@ export function createHarness({
       requestAction,
       toolCalls,
       onDecision,
+      onExecution,
     });
     if (tools.some((tool) => !isGuardedSdkTool(tool))) {
       throw new Error('unguarded_tools_not_allowed');

@@ -1,0 +1,34 @@
+{
+  "protocol": "fluffy.trace/1",
+  "trace_id": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "status": "waiting_for_approval",
+  "observed_at": "2026-10-18T00:00:00.000Z",
+  "source_revision": null,
+  "email": { "received_at": null },
+  "events": [
+    {
+      "id": "historical-0",
+      "sequence": 1,
+      "at": null,
+      "type": "gateway_decision",
+      "title": "Policy decision",
+      "status": "observed",
+      "tool": "send_email",
+      "decision": "review",
+      "reason_code": null,
+      "provenance": "agent_checkpoint"
+    }
+  ],
+  "approval": null,
+  "delivery": {
+    "state": "unknown",
+    "provider_status": null,
+    "observed_at": null
+  },
+  "completeness": {
+    "live_connected": false,
+    "tool_completion_events_available": false,
+    "history_truncated": false,
+    "timestamps_partial": true
+  }
+}

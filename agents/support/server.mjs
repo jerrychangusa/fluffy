@@ -1,3 +1,9 @@
+import {
+  TraceService,
+  ownerAuthenticator,
+  createTraceProvider,
+} from '../../src/trace/service.mjs';
+import { createPrimitiveClient } from '../../src/integrations/primitive/client.mjs';
 import { State } from '../../src/agent/state.mjs';
 import { AgentService } from '../../src/agent/service.mjs';
 import { createHarness } from '../../src/agent/claude.mjs';
@@ -22,6 +28,24 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 
 const state = new State(directory);
 const clock = createPrimitiveClock();
+const traces =
+  process.env.TRACE_ENABLED === 'true'
+    ? new TraceService({
+        state,
+        now: clock.now,
+        ownerSubject: process.env.TRACE_OWNER_SUBJECT,
+        sourceRevision: process.env.SOURCE_REVISION,
+        authenticate: ownerAuthenticator({
+          token: process.env.TRACE_OWNER_TOKEN,
+          subject: process.env.TRACE_OWNER_SUBJECT,
+        }),
+        provider:
+          process.env.TRACE_PROVIDER_ENABLED === 'true' &&
+          process.env.PRIMITIVE_API_KEY
+            ? createTraceProvider(createPrimitiveClient(process.env).api)
+            : null,
+      })
+    : null;
 const cases = new CaseStore({
   state,
   now: clock.now,
@@ -40,12 +64,14 @@ const run = createHarness({
 });
 const service = new AgentService({
   state,
+  traces,
   now: clock.now,
   run,
   onReceipt: (event, conversation) => cases.receiveReceipt(event, conversation),
 });
 const server = createAgentServer({
   service,
+  traces,
   secret,
   modelReady: !!process.env.ANTHROPIC_API_KEY,
   policyReady: !!process.env.TYPESAFE_API_KEY,

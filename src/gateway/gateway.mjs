@@ -44,6 +44,7 @@ export class ToolGateway {
     policy,
     context = {},
     onDecision = () => {},
+    onExecution = () => {},
     minConfidence = 0.8,
     maxCalls = 24,
   }) {
@@ -85,6 +86,7 @@ export class ToolGateway {
     this.policy = policy;
     this.context = freezeJson(context);
     this.onDecision = onDecision;
+    this.onExecution = onExecution;
     this.minConfidence = minConfidence;
     this.maxCalls = maxCalls;
     this.calls = 0;
@@ -209,11 +211,23 @@ export class ToolGateway {
         tool: name,
         call_hash: hash,
       });
+    await this.onExecution({ type: 'tool_started', tool: name });
+    let executed;
+    try {
+      executed = await tool.execute(args);
+    } catch (error) {
+      await this.onExecution({ type: 'tool_failed', tool: name });
+      throw error;
+    }
+    await this.onExecution({
+      type: executed?.isError === true ? 'tool_failed' : 'tool_succeeded',
+      tool: name,
+    });
     const result = {
       status: 'executed',
       tool: name,
       call_hash: hash,
-      result: await tool.execute(args),
+      result: executed,
     };
     if (tool.effect !== 'read') this.writes.set(hash, result);
     return result;

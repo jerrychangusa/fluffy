@@ -43,8 +43,27 @@ export function createAgentServer({
   modelReady,
   policyReady,
   clock,
+  traces = null,
 }) {
   const server = http.createServer(async (request, response) => {
+    if (request.url?.startsWith('/api/traces/')) {
+      response.setHeader('Cache-Control', 'no-store');
+      response.setHeader('Vary', 'Authorization, Cookie');
+      try {
+        const match = /^\/api\/traces\/([A-Za-z0-9_-]{32})$/.exec(request.url);
+        const trace =
+          request.method === 'GET' && match && traces
+            ? await traces.read(match[1], request)
+            : null;
+        return sendJson(
+          response,
+          trace ? 200 : 404,
+          trace || { error: 'not_found' },
+        );
+      } catch {
+        return sendJson(response, 404, { error: 'not_found' });
+      }
+    }
     if (request.url === '/health' && request.method === 'GET') {
       return sendJson(response, 200, {
         ok: true,
