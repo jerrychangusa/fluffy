@@ -1,8 +1,13 @@
 # Agent Approval Service
 
-**Escalate the question, not the whole task.**
+**Human input and permission, by email.**
 
-When an agent lacks information or authority, it emails the right teammate, waits for a reply, and continues the same task. A question supplies information; an approval permits one exact action. The agent keeps ownership of the customer conversation.
+When an agent lacks information or authority, it emails a configured teammate, waits for a reply, and continues the same task. The teammate contributes an answer or permission without taking over the customer conversation.
+
+| The agent needs…         | It sends…                                      | The reply provides…             |
+| ------------------------ | ---------------------------------------------- | ------------------------------- |
+| Information or expertise | A focused question with supporting attachments | An answer; no permission to act |
+| Authority to act         | The exact proposed action for review           | Permission for that action only |
 
 Built for YC's **Make Something Agents Want** hackathon, Primitive's **Best Agent Communication Setup** track.
 
@@ -40,17 +45,18 @@ npm run verify
 
 ## Read the code in this order
 
-| Start here                                                                   | What to look for                                                                            |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| [Complete workflow test](tests/intake-flow.test.mjs)                         | One executable example connecting every component                                           |
-| [Inbox entrypoint](src/functions/inbox.mjs) → [bridge](src/inbox/bridge.mjs) | Inbound email, attachments, sender checks, and duplicate-event checkpoints                  |
-| [Agent service](src/agent/service.mjs)                                       | Persistent sessions, pending work, receipt handling, and resumption                         |
-| [Tool gateway](src/gateway/gateway.mjs)                                      | Every registered tool passes trusted policy checks and independent Jev assessment           |
-| [Question service](src/questions/service.mjs)                                | Ask a configured teammate; treat the reply as information, without granting authority       |
-| [Approval service](src/approval/service.mjs)                                 | Freeze an exact action, authenticate a decision, dispatch execution, and reconcile delivery |
-| [Support agent](agents/support/README.md)                                    | Application tools, messages, form fields, and case state                                    |
+`src/` contains reusable infrastructure. `agents/support/` supplies the eyewear application. `scripts/` builds and deploys them; `tests/` connects them without live credentials.
 
-Two small composition roots wire these parts together: [`inbox.mjs`](src/functions/inbox.mjs) and [`approval.mjs`](src/functions/approval.mjs). Shared code in `src/` has no imports from the support application, except where these roots explicitly wire it in. An [architecture test](src/architecture.test.mjs) enforces that boundary.
+| Start here                                                                                       | What to look for                                                              |
+| ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| [Inbox entrypoint](src/functions/inbox.mjs) → [bridge](src/inbox/bridge.mjs)                     | How an incoming email becomes an authenticated agent event                    |
+| [Support agent wiring](agents/support/server.mjs) → [tools and policy](agents/support/tools.mjs) | The application plugged into the shared runtime and gateway                   |
+| [Agent service](src/agent/service.mjs)                                                           | Saved sessions, pending work, receipts, and resumption                        |
+| [Tool gateway](src/gateway/gateway.mjs)                                                          | Trusted policy and independent Jev assessment before registered tools run     |
+| [Question service](src/questions/service.mjs) / [approval service](src/approval/service.mjs)     | Information replies versus one-use permission for an exact action             |
+| [Complete workflow test](tests/intake-flow.test.mjs)                                             | The whole journey, with test adapters first and the email scenario below them |
+
+Two small composition roots wire these parts together: [`inbox.mjs`](src/functions/inbox.mjs) and [`approval.mjs`](src/functions/approval.mjs). Shared code in `src/` has no imports from the support application, except where a composition root explicitly wires it in. An [architecture test](src/architecture.test.mjs) enforces that boundary.
 
 ## What Primitive does
 

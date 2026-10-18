@@ -23,16 +23,16 @@
       "index": null,
       "roundness": null,
       "seed": 19531,
-      "version": 1,
+      "version": 2,
       "versionNonce": 997,
       "isDeleted": false,
       "boundElements": null,
       "updated": 1792334000000,
       "link": null,
       "locked": false,
-      "text": "The agent keeps the case",
-      "originalText": "The agent keeps the case",
-      "fontSize": 44,
+      "text": "Human input and permission, by email",
+      "originalText": "Human input and permission, by email",
+      "fontSize": 42,
       "fontFamily": 2,
       "textAlign": "left",
       "verticalAlign": "top",
@@ -60,15 +60,15 @@
       "index": null,
       "roundness": null,
       "seed": 39062,
-      "version": 1,
+      "version": 2,
       "versionNonce": 1994,
       "isDeleted": false,
       "boundElements": null,
       "updated": 1792334000000,
       "link": null,
       "locked": false,
-      "text": "A teammate is a resource the agent can reach by email.",
-      "originalText": "A teammate is a resource the agent can reach by email.",
+      "text": "Escalate the question, not the whole task.",
+      "originalText": "Escalate the question, not the whole task.",
       "fontSize": 25,
       "fontFamily": 2,
       "textAlign": "left",
@@ -305,16 +305,16 @@
       "index": null,
       "roundness": null,
       "seed": 175779,
-      "version": 1,
+      "version": 2,
       "versionNonce": 8973,
       "isDeleted": false,
       "boundElements": null,
       "updated": 1792334000000,
       "link": null,
       "locked": false,
-      "text": "Inbox · files · Memories · Wake",
-      "originalText": "Inbox · files · Memories · Wake",
-      "fontSize": 18,
+      "text": "2 email Functions \u00b7 Memories \u00b7 Wake",
+      "originalText": "2 email Functions \u00b7 Memories \u00b7 Wake",
+      "fontSize": 17,
       "fontFamily": 2,
       "textAlign": "center",
       "verticalAlign": "top",
@@ -342,15 +342,15 @@
       "index": null,
       "roundness": null,
       "seed": 195310,
-      "version": 1,
+      "version": 2,
       "versionNonce": 9970,
       "isDeleted": false,
       "boundElements": null,
       "updated": 1792334000000,
       "link": null,
       "locked": false,
-      "text": "support@pink-marsh.primitive.email",
-      "originalText": "support@pink-marsh.primitive.email",
+      "text": "Agent identities + attachments",
+      "originalText": "Agent identities + attachments",
       "fontSize": 15,
       "fontFamily": 2,
       "textAlign": "center",
@@ -409,15 +409,15 @@
       "index": null,
       "roundness": null,
       "seed": 234372,
-      "version": 1,
+      "version": 2,
       "versionNonce": 11964,
       "isDeleted": false,
       "boundElements": null,
       "updated": 1792334000000,
       "link": null,
       "locked": false,
-      "text": "REVIEW TEAM",
-      "originalText": "REVIEW TEAM",
+      "text": "HUMAN TEAMMATE",
+      "originalText": "HUMAN TEAMMATE",
       "fontSize": 19,
       "fontFamily": 2,
       "textAlign": "center",
@@ -528,14 +528,8 @@
       "link": null,
       "locked": false,
       "points": [
-        [
-          0,
-          0
-        ],
-        [
-          170,
-          0
-        ]
+        [0, 0],
+        [170, 0]
       ],
       "lastCommittedPoint": null,
       "startBinding": null,
@@ -609,14 +603,8 @@
       "link": null,
       "locked": false,
       "points": [
-        [
-          0,
-          0
-        ],
-        [
-          -170,
-          0
-        ]
+        [0, 0],
+        [-170, 0]
       ],
       "lastCommittedPoint": null,
       "startBinding": null,
@@ -690,14 +678,8 @@
       "link": null,
       "locked": false,
       "points": [
-        [
-          0,
-          0
-        ],
-        [
-          170,
-          0
-        ]
+        [0, 0],
+        [170, 0]
       ],
       "lastCommittedPoint": null,
       "startBinding": null,
@@ -771,14 +753,8 @@
       "link": null,
       "locked": false,
       "points": [
-        [
-          0,
-          0
-        ],
-        [
-          -170,
-          0
-        ]
+        [0, 0],
+        [-170, 0]
       ],
       "lastCommittedPoint": null,
       "startBinding": null,
@@ -1023,14 +999,8 @@
       "link": null,
       "locked": false,
       "points": [
-        [
-          0,
-          0
-        ],
-        [
-          0,
-          162
-        ]
+        [0, 0],
+        [0, 162]
       ],
       "lastCommittedPoint": null,
       "startBinding": null,
@@ -1104,14 +1074,8 @@
       "link": null,
       "locked": false,
       "points": [
-        [
-          0,
-          0
-        ],
-        [
-          0,
-          -162
-        ]
+        [0, 0],
+        [0, -162]
       ],
       "lastCommittedPoint": null,
       "startBinding": null,
@@ -1177,15 +1141,15 @@
       "index": null,
       "roundness": null,
       "seed": 624992,
-      "version": 1,
+      "version": 2,
       "versionNonce": 31904,
       "isDeleted": false,
       "boundElements": null,
       "updated": 1792334000000,
       "link": null,
       "locked": false,
-      "text": "The teammate helps. The agent retains ownership of the case.",
-      "originalText": "The teammate helps. The agent retains ownership of the case.",
+      "text": "An answer informs the agent. An approval permits one exact action.",
+      "originalText": "An answer informs the agent. An approval permits one exact action.",
       "fontSize": 26,
       "fontFamily": 2,
       "textAlign": "center",
@@ -1214,15 +1178,15 @@
       "index": null,
       "roundness": null,
       "seed": 644523,
-      "version": 1,
+      "version": 2,
       "versionNonce": 32901,
       "isDeleted": false,
       "boundElements": null,
       "updated": 1792334000000,
       "link": null,
       "locked": false,
-      "text": "Demo: Jerry plays both human roles. The agent and email handoffs run live.",
-      "originalText": "Demo: Jerry plays both human roles. The agent and email handoffs run live.",
+      "text": "Questions and approvals use email. Replies resume the same agent session.",
+      "originalText": "Questions and approvals use email. Replies resume the same agent session.",
       "fontSize": 17,
       "fontFamily": 2,
       "textAlign": "center",

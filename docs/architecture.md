@@ -1,6 +1,13 @@
 # Architecture
 
-Two Primitive Functions and one Blaxel agent runtime handle the complete workflow.
+Two Primitive Functions and one Blaxel agent runtime handle the complete workflow. “Approval Service” names the project; questions and approvals are separate reusable services within it.
+
+| Request                | Reply                                                           | What resumes the agent                                                  |
+| ---------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `question.request/1`   | A configured teammate answers in the original email thread      | `question.receipt/1` supplies information; it grants no authority       |
+| `permission.request/1` | The authorized reviewer approves, declines, or requests changes | `permission.receipt/1` reports the outcome after any approved execution |
+
+The agent stops its turn while a request is pending. A later email receipt starts another turn with the saved Claude session; no process waits on an open chat for the human.
 
 ```mermaid
 sequenceDiagram

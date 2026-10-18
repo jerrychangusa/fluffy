@@ -129,6 +129,7 @@ test(
         });
       },
     };
+    // Test adapters below simulate provider mail, attachments and Wake delivery.
     const emails = new Map(),
       sent = [],
       parts = new Map();
@@ -312,6 +313,7 @@ test(
       assert.equal((await approvals.handleEmail(wake)).status, 'executed');
       return inbox.receive(receipt());
     }
+    // The email journey starts here: image → form → question → approval → completion.
     const rx = {
       filename: 'prescription.png',
       content_type: 'image/png',
