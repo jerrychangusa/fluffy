@@ -107,6 +107,7 @@ export class AgentService {
     if (proposal) {
       runResult = { status: 'recovered_proposal' };
     } else {
+      this.traces?.append(event.id, { type: 'run_started' });
       runResult = await this.run({
         event,
         conversation,

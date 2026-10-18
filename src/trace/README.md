@@ -101,3 +101,23 @@ No worker implementation is included here because the native site's identity and
 routing APIs live in the separate frontend task. Do not deploy a placeholder that
 trusts a request header for identity. `src/trace/example.json` is a synthetic exact
 response shape for frontend contract checks; it contains no real inbox data.
+
+## Reviewed timing and schema details
+
+`schema.json` is the full closed JSON Schema (2020-12); unknown fields are forbidden.
+`observed_at`, like event timestamps, is nullable. On a cold agent restart the
+provider clock may not yet be initialized: the read still succeeds, reports null
+observation time, and sets timestamps_partial. GET does not initialize or persist
+clock state. `event_received` records agent intake; `run_started` is emitted only
+immediately before the harness invocation after queueing. These timestamps are not
+Primitive email receipt timestamps. Display sequences increase within a snapshot
+and can have gaps. Stable approval IDs hash only allowlisted kind/time/occurrence;
+indistinguishable same-kind same-time duplicates cannot be correlated after rolling
+history drops one, so do not use IDs as proof of execution identity. Historical
+24-decision caps are conservatively flagged truncated. Missing Memory records (404)
+preserve available email evidence; provider errors do not expose exception details.
+
+For frontend transport, accept only JSON responses conforming to schema.json.
+Render text via textContent/framework escaping, not raw HTML. All future fields
+require a versioned contract update; never pass through a raw provider object.
+Use the sample only as an explicitly synthetic fixture, never a fallback live result.

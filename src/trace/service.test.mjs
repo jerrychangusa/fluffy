@@ -155,7 +155,13 @@ test('instrumentation persists across reopen, replay adds no events, gateway all
   const first = await traces.read(id, { identity: { subject: 'owner' } });
   assert.deepEqual(
     first.events.map((x) => x.type),
-    ['run_started', 'gateway_decision', 'tool_started', 'tool_failed'],
+    [
+      'event_received',
+      'run_started',
+      'gateway_decision',
+      'tool_started',
+      'tool_failed',
+    ],
   );
   await service.handle(event);
   assert.deepEqual(
@@ -263,4 +269,92 @@ test('tool success and thrown failure emit ordered execution events; review neve
         : ['tool_started', mode === 'throw' ? 'tool_failed' : 'tool_succeeded'],
     );
   }
+});
+test('cold observation clock is unknown, never fabricates time or hides an authorized trace', async (t) => {
+  const { traces, id, state } = setup(t);
+  const snapshot = JSON.stringify(state.get('trace/' + id));
+  traces.now = () => {
+    throw Error('clock_not_ready');
+  };
+  const dto = await traces.read(id, { identity: { subject: 'owner' } });
+  assert.equal(dto.observed_at, null);
+  assert.equal(dto.completeness.timestamps_partial, true);
+  assert.equal(JSON.stringify(state.get('trace/' + id)), snapshot);
+});
+test('truncated local history plus provider lifecycle retains increasing display sequence', async (t) => {
+  const { traces, id } = setup(t, {
+    provider: {
+      read: async () => ({
+        approval: { events: [{ kind: 'requested', at: 1700000000000 }] },
+      }),
+    },
+  });
+  for (let n = 0; n < 210; n++)
+    traces.append(event.id, { type: 'session_started' });
+  const dto = await traces.read(id, { identity: { subject: 'owner' } });
+  assert.equal(dto.completeness.history_truncated, true);
+  for (let n = 1; n < dto.events.length; n++)
+    assert.ok(dto.events[n].sequence > dto.events[n - 1].sequence);
+});
+test('identity headers cannot impersonate the owner; GET changes no SQLite records', async (t) => {
+  const { traces, id, state } = setup(t, {
+    authenticate: ownerAuthenticator({ token: 'private', subject: 'owner' }),
+  });
+  assert.equal(
+    await traces.read(id, {
+      headers: {
+        'x-user-id': 'owner',
+        'x-user-email': event.email.from_email,
+        'x-email-verified': 'true',
+      },
+    }),
+    null,
+  );
+  const before = state.db.prepare('SELECT * FROM state ORDER BY key').all();
+  await traces.read(id, { headers: { authorization: 'Bearer private' } });
+  assert.deepEqual(
+    state.db.prepare('SELECT * FROM state ORDER BY key').all(),
+    before,
+  );
+});
+test('capped historical decisions are marked potentially truncated', async (t) => {
+  const { traces, state } = setup(t);
+  state.put('event/old-capped', {
+    result: {
+      gateway_decisions: Array(24).fill({
+        tool: 'read_case',
+        decision: 'allow',
+      }),
+    },
+  });
+  const id = traces.begin({ ...event, id: 'old-capped' });
+  assert.equal(
+    (await traces.read(id, { identity: { subject: 'owner' } })).completeness
+      .history_truncated,
+    true,
+  );
+});
+test('a missing checkpoint preserves known email evidence; no provider mutation', async () => {
+  const provider = createTraceProvider(async (...args) => {
+    assert.equal(args.length, 1);
+    if (args[0].startsWith('/emails/'))
+      return { received_at: '2026-10-18T00:00:00Z' };
+    throw Object.assign(Error('not_found'), { status: 404 });
+  });
+  const result = await provider.read({ email_id: 'email-1' });
+  assert.equal(result.email.received_at, '2026-10-18T00:00:00Z');
+  assert.equal(result.checkpoint, null);
+});
+test('rolling lifecycle history preserves IDs of retained distinguishable events', async (t) => {
+  const history = [
+    { kind: 'requested', at: 1700000000000 },
+    { kind: 'approved', at: 1700000001000 },
+  ];
+  const { traces, id } = setup(t, {
+    provider: { read: async () => ({ approval: { events: history } }) },
+  });
+  const first = await traces.read(id, { identity: { subject: 'owner' } });
+  history.shift();
+  const next = await traces.read(id, { identity: { subject: 'owner' } });
+  assert.equal(first.events.at(-1).id, next.events.at(-1).id);
 });

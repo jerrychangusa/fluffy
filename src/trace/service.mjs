@@ -30,6 +30,7 @@ const STATUSES = [
   'changes_requested',
 ];
 const TYPES = {
+  event_received: ['Agent event received', 'observed'],
   run_started: ['Agent started', 'running'],
   session_started: ['Agent session observed', 'observed'],
   action_requested: ['Action requested', 'pending'],
@@ -98,7 +99,7 @@ export class TraceService {
         historical,
       });
     });
-    if (!historical) this.append(event.id, { type: 'run_started' });
+    if (!historical) this.append(event.id, { type: 'event_received' });
     return id;
   }
 
@@ -155,6 +156,12 @@ export class TraceService {
         /* incomplete, never invent provider state */
       }
     }
+    let observedAt = null;
+    try {
+      observedAt = iso(this.now());
+    } catch {
+      /* clock unavailable after restart */
+    }
     const events = record.events.map((entry) => ({
       id: entry.id,
       sequence: entry.sequence,
@@ -169,16 +176,16 @@ export class TraceService {
       reason_code: null,
       provenance: 'agent',
     }));
+    const historicalDecisions =
+      checkpoint?.result?.gateway_decisions ||
+      checkpoint?.gateway_decisions ||
+      overlay?.checkpoint?.gateway_decisions ||
+      [];
     if (record.historical) {
-      for (const decision of (
-        checkpoint?.result?.gateway_decisions ||
-        checkpoint?.gateway_decisions ||
-        overlay?.checkpoint?.gateway_decisions ||
-        []
-      ).slice(0, 24)) {
+      for (const decision of historicalDecisions.slice(0, 24)) {
         events.push({
           id: 'historical-' + events.length,
-          sequence: events.length + 1,
+          sequence: (events.at(-1)?.sequence || 0) + 1,
           at: null,
           type: 'gateway_decision',
           title: 'Policy decision',
@@ -211,11 +218,19 @@ export class TraceService {
       'wake_dispatched',
       'wake_unknown',
     ];
+    const lifecycleOccurrences = new Map();
     for (const entry of (overlay?.approval?.events || []).slice(-40)) {
       if (!lifecycle.includes(entry.kind)) continue;
+      const fingerprint = JSON.stringify([entry.kind, iso(entry.at)]);
+      const occurrence = lifecycleOccurrences.get(fingerprint) || 0;
+      lifecycleOccurrences.set(fingerprint, occurrence + 1);
       events.push({
-        id: 'approval-' + events.length,
-        sequence: events.length + 1,
+        id:
+          'approval-' +
+          digest(JSON.stringify([entry.kind, iso(entry.at), occurrence]))
+            .toString('hex')
+            .slice(0, 24),
+        sequence: (events.at(-1)?.sequence || 0) + 1,
         at: iso(entry.at),
         type: 'approval_' + entry.kind,
         title: 'Approval: ' + entry.kind.replaceAll('_', ' '),
@@ -247,7 +262,7 @@ export class TraceService {
           checkpoint?.status ||
           overlay?.checkpoint?.status,
       ),
-      observed_at: iso(this.now()),
+      observed_at: observedAt,
       source_revision: /^[a-f0-9]{40}$/.test(this.sourceRevision || '')
         ? this.sourceRevision
         : null,
@@ -275,15 +290,19 @@ export class TraceService {
                 ? 'pending_delivery'
                 : 'unknown',
         provider_status: sentStatus,
-        observed_at: overlay?.sent ? iso(this.now()) : null,
+        observed_at: overlay?.sent ? observedAt : null,
       },
       completeness: {
         live_connected: !!overlay,
         tool_completion_events_available: !record.historical,
         history_truncated:
-          record.truncated || (overlay?.approval?.events?.length || 0) >= 40,
+          record.truncated ||
+          (record.historical && historicalDecisions.length >= 24) ||
+          (overlay?.approval?.events?.length || 0) >= 40,
         timestamps_partial:
+          !observedAt ||
           record.historical ||
+          events.some((entry) => entry.at === null) ||
           !iso(overlay?.email?.received_at || record.received_at) ||
           !!overlay?.approval,
       },
@@ -293,9 +312,16 @@ export class TraceService {
 
 // GET-only adapter. Do not use ApprovalService.reconcile (it writes and wakes).
 export function createTraceProvider(api) {
-  const memory = async (namespace, key) =>
-    (await api('/memories?key=' + encodeURIComponent(namespace + '/' + key)))
-      ?.value;
+  const memory = async (namespace, key) => {
+    try {
+      return (
+        await api('/memories?key=' + encodeURIComponent(namespace + '/' + key))
+      )?.value;
+    } catch (error) {
+      if (error.status === 404) return null;
+      throw error;
+    }
+  };
   return {
     async read(record) {
       const email = await api('/emails/' + encodeURIComponent(record.email_id));
