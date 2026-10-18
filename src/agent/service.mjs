@@ -3,11 +3,13 @@ import { validateEvent, draftAction } from './contracts.mjs';
 export class AgentService {
   constructor({
     state,
+    traces = null,
     run,
     onReceipt = async () => {},
     now = () => Date.now(),
   }) {
     this.state = state;
+    this.traces = traces;
     this.run = run;
     this.onReceipt = onReceipt;
     this.now = now;
@@ -19,6 +21,7 @@ export class AgentService {
     // Duplicate events share a task; different events in one conversation wait
     // for the previous task before reading or changing its session state.
     validateEvent(event);
+    this.traces?.begin(event);
     const eventKey = 'event/' + event.id;
     const checkpoint = this.state.get(eventKey);
     if (checkpoint?.result) {
@@ -91,6 +94,7 @@ export class AgentService {
         throw new Error('one_immutable_proposal_per_event');
       }
       proposal = nextProposal;
+      this.traces?.append(event.id, { type: 'action_requested' });
       saveCheckpoint();
       return {
         status: 'pending',
@@ -107,12 +111,18 @@ export class AgentService {
         event,
         conversation,
         requestAction,
+        onExecution: (entry) => this.traces?.append(event.id, entry),
         onDecision: (decision) => {
+          this.traces?.append(event.id, {
+            ...decision,
+            type: 'gateway_decision',
+          });
           if (gatewayDecisions.length < 24)
             gatewayDecisions.push(structuredClone(decision));
           saveCheckpoint();
         },
         onSession: (id) => {
+          this.traces?.append(event.id, { type: 'session_started' });
           sessionId = id;
           conversation.session_id = id;
           this.state.put(conversationKey, conversation);
@@ -253,6 +263,11 @@ export class AgentService {
   }
 
   remember(event, result) {
+    if (this.traces)
+      result = {
+        ...result,
+        trace_id: this.state.get('trace-event/' + event.id),
+      };
     this.state.put('event/' + event.id, { status: 'complete', result });
     return result;
   }

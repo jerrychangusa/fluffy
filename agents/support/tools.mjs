@@ -228,6 +228,7 @@ export function createSupportTools(cases, { assess } = {}) {
         untrusted_customer_message: email.body_text.slice(0, 6000),
       },
       toolCalls,
+      onExecution: context.onExecution,
       onDecision: async (decision) => {
         decisions.set(decision.tool, decision);
         if (
