@@ -121,3 +121,6 @@ For frontend transport, accept only JSON responses conforming to schema.json.
 Render text via textContent/framework escaping, not raw HTML. All future fields
 require a versioned contract update; never pass through a raw provider object.
 Use the sample only as an explicitly synthetic fixture, never a fallback live result.
+
+For operator setup, real-backend test steps and a suggested coding-agent task, read
+[INTEGRATION.md](INTEGRATION.md). The separate private viewer currently does not poll.
