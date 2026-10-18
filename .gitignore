@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env*
+!.env.example
+*.sqlite*
+.state/
+.DS_Store
+
+# Keep live deployment identities and rehearsal records local.
+deployment/*.json
+!deployment/*.example.json
+evidence/

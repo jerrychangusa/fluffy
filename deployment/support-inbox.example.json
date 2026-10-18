@@ -1,0 +1,9 @@
+{
+  "function_id": "00000000-0000-4000-a000-000000000002",
+  "agent_url": "https://your-agent.preview.bl.run",
+  "sandbox": "your-sandbox",
+  "allowed_customers": ["customer@example.com"],
+  "agent_entry": "agents/support/server.mjs",
+  "state_namespace": "prescription-intake",
+  "order_id": "1042"
+}

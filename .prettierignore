@@ -1,0 +1,5 @@
+dist/
+deployment/approval.json
+deployment/support-inbox.json
+evidence/
+**/package-lock.json

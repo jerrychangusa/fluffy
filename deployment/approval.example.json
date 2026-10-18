@@ -1,0 +1,15 @@
+{
+  "approval_address": "approvals@your-domain.primitive.email",
+  "execution_address": "executor@your-domain.primitive.email",
+  "requester_address": "requester@your-domain.primitive.email",
+  "customer_sender": "support@your-domain.primitive.email",
+  "approver": "reviewer@example.com",
+  "signing_domain": "primitive.email",
+  "signing_selector": "replace-with-your-primitive-dkim-selector",
+  "function_id": "00000000-0000-4000-a000-000000000001",
+  "allowed_recipients": ["customer@example.com"],
+  "approver_timezone": "America/Los_Angeles",
+  "teammates": {
+    "optician": "reviewer@example.com"
+  }
+}
