@@ -1,16 +1,16 @@
 # Agent Approval Service
 
-**An agent can ask a teammate for help by email without handing over the case.**
+**Escalate the question, not the whole task.**
 
 When an agent lacks information or authority, it emails the right teammate, waits for a reply, and continues the same task. A question supplies information; an approval permits one exact action. The agent keeps ownership of the customer conversation.
 
 Built for YC's **Make Something Agents Want** hackathon, Primitive's **Best Agent Communication Setup** track.
 
-**[Watch the 1:58 demo](https://github.com/jerrychangusa/agent-approval-service/releases/download/v1.0.0/demo-final-elevenlabs.io.mp4)** · [Architecture](docs/architecture.md) · [Verification and limits](docs/verification.md)
+**[Watch the 1:58 demo](https://youtu.be/uBpWsKtDoRw)** · [Architecture](docs/architecture.md) · [Verification and limits](docs/verification.md)
 
-![The agent coordinates with a teammate through Primitive email while keeping the customer case](docs/system-overview.png)
+[![Escalate the question, not the whole task — watch the demo](docs/demo-thumbnail.png)](https://youtu.be/uBpWsKtDoRw)
 
-[Editable Excalidraw overview](docs/system-overview.excalidraw)
+[System overview](docs/system-overview.png) · [Editable Excalidraw](docs/system-overview.excalidraw)
 
 ## The demo
 

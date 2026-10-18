@@ -1,8 +1,8 @@
 # Live demo
 
-**The agent can use a teammate as a resource by email without handing over the case.**
+**Escalate the question, not the whole task.**
 
-[Watch the 1:58 recording](https://github.com/jerrychangusa/agent-approval-service/releases/download/v1.0.0/demo-final-elevenlabs.io.mp4) or follow this walkthrough with your own configured inboxes. The [system overview](system-overview.png) takes about six seconds to explain.
+[Watch the 1:58 recording](https://youtu.be/uBpWsKtDoRw) or follow this walkthrough with your own configured inboxes. The [system overview](system-overview.png) takes about six seconds to explain.
 
 ## Roles
 
