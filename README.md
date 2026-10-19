@@ -35,6 +35,8 @@ The teammate supplies an answer or permission; they never take over the case. Re
 
 ## Run it locally
 
+Want to connect your own inbox? Follow the [step-by-step own-instance guide](docs/own-instance.md), starting with the credential-free demo.
+
 Requires **Node.js 24**. No credentials are needed for the default checks.
 
 ```sh
@@ -43,7 +45,7 @@ npm run demo
 npm run verify
 ```
 
-`demo` exercises the complete attachment → form → teammate answer → approval → completion journey through the actual services, using a deterministic model adapter and in-memory mail transport. It sends no real emails. `verify` runs all **142 tests**, checks formatting, and builds both Primitive Functions. Real hosted email and model verification are documented separately in [verification](docs/verification.md).
+`demo` exercises the complete attachment → form → teammate answer → approval → completion journey through the actual services, using a deterministic model adapter and in-memory mail transport. It sends no real emails. `verify` runs the test suite, checks formatting, and builds both Primitive Functions. Real hosted email and model verification are documented separately in [verification](docs/verification.md).
 
 ## Read the code in this order
 
@@ -70,14 +72,12 @@ Two small composition roots wire these parts together: [`inbox.mjs`](src/functio
 | Wake                                   | Dispatch an approved action asynchronously, then return an execution receipt      |
 | Native logs                            | Show tool decisions and session resumption during the demo                        |
 
-There are **two Primitive Functions and one Claude runtime on Blaxel**. The approval service is code inside the internal mailbox Function. Decisions happen by email, with no separate approval web app. Jev checks tool calls in the trusted gateway and assesses requests again in the mailbox Function.
+The live workflow uses **two Primitive Functions and one Claude runtime**. The recorded deployment uses Blaxel; the runtime can also run on your own Node host. The approval service is code inside the internal mailbox Function. Decisions happen by email, with no separate approval web app. Jev checks tool calls in the trusted gateway and assesses requests again in the mailbox Function.
 
 ## Reuse and deployment
 
 The support agent is one application. The gateway, session runtime, inbox bridge, questions, and approval protocol are reusable. Another application supplies its tools, policy, and trusted action validator; another harness can call `ToolGateway` directly. See [architecture and reuse](docs/architecture.md).
 
-For a real inbox, follow [deployment and operations](docs/operations.md). Versioned configuration files are examples; live resource IDs, credentials, state, and rehearsal logs are excluded from Git. [Live walkthrough instructions](docs/demo.md) describe the email roles and preparation.
+For a real inbox, start with the [own-instance setup guide](docs/own-instance.md); [deployment and operations](docs/operations.md) covers operational details. Versioned configuration files are examples; live resource IDs, credentials, state, and rehearsal logs are excluded from Git. [Live walkthrough instructions](docs/demo.md) describe the email roles and preparation.
 
 This example records administrative intake for a configured example order, with isolated cases per customer thread. Customer access can use an allowlist or accept any email-authenticated sender. It does not perform clinical validation, integrate with a production order system, or fulfill an order. See [verification and limits](docs/verification.md) for exactly what was tested.
-
-For your own keys, resources and hosting, see [own-instance setup](docs/own-instance.md).
