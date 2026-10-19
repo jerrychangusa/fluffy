@@ -79,3 +79,5 @@ The support agent is one application. The gateway, session runtime, inbox bridge
 For a real inbox, follow [deployment and operations](docs/operations.md). Versioned configuration files are examples; live resource IDs, credentials, state, and rehearsal logs are excluded from Git. [Live walkthrough instructions](docs/demo.md) describe the email roles and preparation.
 
 This example records administrative intake for a configured example order, with isolated cases per customer thread. Customer access can use an allowlist or accept any email-authenticated sender. It does not perform clinical validation, integrate with a production order system, or fulfill an order. See [verification and limits](docs/verification.md) for exactly what was tested.
+
+For your own keys, resources and hosting, see [own-instance setup](docs/own-instance.md).

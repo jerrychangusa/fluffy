@@ -1,0 +1,20 @@
+services:
+  agent:
+    build: .
+    env_file:
+      - ${FLUFFY_RUNTIME_ENV:?Set FLUFFY_RUNTIME_ENV to an absolute private runtime.env path}
+    environment:
+      AGENT_STATE_DIR: /state
+      AGENT_PORT: '8000'
+    ports:
+      - '127.0.0.1:8000:8000'
+    volumes:
+      - agent-state:/state
+    restart: unless-stopped
+    stop_grace_period: 200s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+volumes:
+  agent-state:

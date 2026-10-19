@@ -1,19 +1,10 @@
-import { buildInboxBundle, projectRoot } from './lib/bundles.mjs';
-import {
-  adminApi,
-  readConfig,
-  configureSecrets,
-} from './lib/primitive-deployment.mjs';
+import { loadInstance } from './lib/instance-config.mjs';
+import { buildInboxBundle } from './lib/bundles.mjs';
+import { adminApi, configureSecrets } from './lib/primitive-deployment.mjs';
 import { inboxConfig } from '../src/shared/configuration.mjs';
 
-const approval = await readConfig(
-  new URL('deployment/approval.json', projectRoot),
-);
-const deployment = await readConfig(
-  new URL('deployment/support-inbox.json', projectRoot),
-);
+const { approval, inbox: deployment } = await loadInstance();
 const config = inboxConfig({ ...approval, ...deployment });
-if (!deployment.function_id) throw new Error('function_id required');
 const code = await buildInboxBundle();
 if (process.argv.includes('--dry-run')) {
   console.log({
