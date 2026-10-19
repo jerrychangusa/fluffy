@@ -45,3 +45,40 @@ test('runtime archive includes the form asset and rejects paths outside the proj
     createAgentArchive('agents/support/server.mjs', ['../private.env']),
   );
 });
+
+test('container COPY and build context include every local runtime dependency', async () => {
+  const dockerfile = await fs.readFile(
+    new URL('Dockerfile', projectRoot),
+    'utf8',
+  );
+  const ignore = (
+    await fs.readFile(new URL('.dockerignore', projectRoot), 'utf8')
+  )
+    .trim()
+    .split('\n');
+  // This recipe deliberately uses an allowlist, simple relative COPY sources,
+  // and one exclusion. Fail on syntax changes rather than guessing Docker rules.
+  assert.equal(ignore[0], '*');
+  assert.equal(ignore.at(-1), '**/*.test.mjs');
+  assert.ok(ignore.slice(1, -1).every((line) => line.startsWith('!')));
+  const allowed = ignore.slice(1, -1).map((line) => line.slice(1));
+  const copied = [
+    ...dockerfile.matchAll(/^COPY (?:--chown=\S+ )?(.+)$/gm),
+  ].flatMap(([, args]) => args.split(' ').slice(0, -1));
+  const archive = await createAgentArchive();
+  for (const { entryName: name } of archive.getEntries()) {
+    assert.ok(
+      copied.some((source) => name === source || name.startsWith(source + '/')),
+      'Missing COPY: ' + name,
+    );
+    assert.ok(
+      allowed.some((pattern) =>
+        pattern.endsWith('/**')
+          ? name.startsWith(pattern.slice(0, -2))
+          : name === pattern,
+      ),
+      'Excluded build context: ' + name,
+    );
+    assert.ok(!name.endsWith('.test.mjs'));
+  }
+});

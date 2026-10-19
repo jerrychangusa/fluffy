@@ -45,6 +45,18 @@ test('instance validation accepts explicit resources without network or credenti
 test('rejects mixed instance settings and unsafe/example targets', async () => {
   const changes = [
     (x) => {
+      x.inbox.requester_address = 'requester@another.test';
+    },
+    (x) => {
+      x.inbox.approval_address = 'approvals@another.test';
+    },
+    (x) => {
+      x.inbox.signing_selector = 'another-selector';
+    },
+    (x) => {
+      x.inbox.teammates = { optician: 'other@another.test' };
+    },
+    (x) => {
       delete x.approval.teammates;
     },
     (x) => {

@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import {
   approvalConfig,
@@ -26,6 +27,16 @@ export async function loadInstance(env = process.env) {
 
 // Local consistency checks, not proof of ownership or provider readiness.
 export function validateInstance({ approval, inbox }) {
+  // The two Function IDs differ by design; all shared settings must agree.
+  // Otherwise the inbox spread could silently replace a reviewed identity.
+  for (const key of Object.keys(approval)) {
+    if (
+      key !== 'function_id' &&
+      Object.hasOwn(inbox, key) &&
+      !isDeepStrictEqual(approval[key], inbox[key])
+    )
+      throw new Error('Conflicting shared instance setting: ' + key);
+  }
   approvalConfig(approval);
   inboxConfig({ ...approval, ...inbox });
   for (const config of [approval, inbox]) {

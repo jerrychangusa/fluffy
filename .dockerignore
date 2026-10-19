@@ -6,4 +6,6 @@
 !src/**
 !agents/
 !agents/**
+!assets/
+!assets/intake-form.mjs
 **/*.test.mjs
