@@ -1,3 +1,4 @@
+import { configFile } from './lib/instance-config.mjs';
 // Credentials come from a private environment file. Blaxel authentication uses
 // the logged-in CLI account. Primitive credentials enter the trusted runtime
 // only when the read-only trace provider is explicitly enabled.
@@ -7,10 +8,7 @@ import fs from 'node:fs/promises';
 import { createAgentArchive } from './lib/agent-archive.mjs';
 import { traceEnvironment } from './lib/trace-environment.mjs';
 
-const deploymentFile = new URL(
-  '../deployment/support-inbox.json',
-  import.meta.url,
-);
+const deploymentFile = configFile('support-inbox.json');
 
 async function prepareRuntime(sandbox) {
   const archive = await createAgentArchive(agentEntry);
@@ -49,7 +47,7 @@ async function configureRuntime(sandbox) {
     'AGENT_BRIDGE_SECRET=' + process.env.AGENT_BRIDGE_SECRET,
     'TYPESAFE_API_KEY=' + process.env.TYPESAFE_API_KEY,
     'AGENT_STATE_DIR=' + stateDirectory,
-    'AGENT_MODEL=' + (process.env.AGENT_MODEL || 'claude-sonnet-5-5'),
+    'AGENT_MODEL=' + (process.env.AGENT_MODEL || 'sonnet'),
     ...(agentEntry === 'agents/support/server.mjs'
       ? [
           'SUPPORT_CUSTOMER_ACCESS=' +

@@ -22,7 +22,8 @@
     "start:support": "node agents/support/server.mjs",
     "test:gateway": "node --test src/gateway/*.test.mjs agents/support/*.test.mjs",
     "demo": "node --test --test-reporter=spec tests/intake-flow.test.mjs",
-    "verify": "npm test && npm run check && npm run build"
+    "verify": "npm test && npm run check && npm run build",
+    "setup": "node scripts/setup-instance.mjs"
   },
   "devDependencies": {
     "@blaxel/core": "0.3.30",

@@ -1,0 +1,11 @@
+*
+!Dockerfile
+!package.json
+!package-lock.json
+!src/
+!src/**
+!agents/
+!agents/**
+!assets/
+!assets/intake-form.mjs
+**/*.test.mjs
